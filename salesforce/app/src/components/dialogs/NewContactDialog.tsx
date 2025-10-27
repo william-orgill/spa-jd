@@ -6,53 +6,45 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { Lead } from "@/lib/types";
-import { SectionLayout } from "./LeadDialogItems";
+import type { Contact } from "@/lib/types";
+import { SectionLayout } from "./DialogItems";
 import { DetailInput, SubSectionTitle } from "@/components/common/InputItems";
 import { DetailFieldSimple } from "@/components/common/details-panel/DetailField";
 import {
   SALUTATION_OPTIONS,
-  LEAD_STATUS_OPTIONS,
   COUNTRY_OPTIONS,
-  LEAD_SOURCE_OPTIONS,
-  INDUSTRY_OPTIONS,
 } from "@/lib/consts/dropdown-options";
 
-interface NewLeadDialogProps {
+interface NewContactDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (leadData: Lead) => void;
+  onSave: (contactData: Contact) => void;
 }
 
-export default function NewLeadDialog({
+export default function NewContactDialog({
   isOpen,
   onClose,
   onSave,
-}: NewLeadDialogProps) {
-  const [formData, setFormData] = useState<Partial<Lead>>({
+}: NewContactDialogProps) {
+  const [formData, setFormData] = useState<Partial<Contact>>({
     salutation: "",
     firstName: "",
     lastName: "",
-    company: "",
+    accountName: "",
     title: "",
-    website: "",
+    reportsTo: "",
     description: "",
-    leadStatus: "New",
-    leadOwner: "Dzaka Athif",
+    contactOwner: "Dzaka Athif",
     phone: "",
     email: "",
-    country: "",
-    street: "",
-    city: "",
-    state: "",
-    zipCode: "",
-    numberOfEmployees: "",
-    annualRevenue: "",
-    leadSource: "",
-    industry: "",
+    mailingCountry: "",
+    mailingStreet: "",
+    mailingCity: "",
+    mailingState: "",
+    mailingZipCode: "",
   });
 
-  const handleInputChange = (field: keyof Lead, value: string) => {
+  const handleInputChange = (field: keyof Contact, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -61,32 +53,25 @@ export default function NewLeadDialog({
       salutation: "",
       firstName: "",
       lastName: "",
-      company: "",
+      accountName: "",
       title: "",
-      website: "",
+      reportsTo: "",
       description: "",
-      leadStatus: "New",
-      leadOwner: "Dzaka Athif",
+      contactOwner: "Dzaka Athif",
       phone: "",
       email: "",
-      country: "",
-      street: "",
-      city: "",
-      state: "",
-      zipCode: "",
-      numberOfEmployees: "",
-      annualRevenue: "",
-      leadSource: "",
-      industry: "",
+      mailingCountry: "",
+      mailingStreet: "",
+      mailingCity: "",
+      mailingState: "",
+      mailingZipCode: "",
     });
   };
 
-  const validateAndGetLeadData = (): Lead | null => {
+  const validateAndGetContactData = (): Contact | null => {
     // Validate required fields
-    if (!formData.lastName || !formData.company || !formData.leadStatus) {
-      alert(
-        "Please fill in all required fields: Last Name, Company, and Lead Status"
-      );
+    if (!formData.lastName || !formData.accountName) {
+      alert("Please fill in all required fields: Last Name, and Account Name");
       return null;
     }
 
@@ -98,26 +83,26 @@ export default function NewLeadDialog({
     return {
       ...formData,
       name,
-      company: formData.company || "",
-    } as Lead;
+      accountName: formData.accountName || "",
+    } as Contact;
   };
 
   const handleSave = () => {
-    const leadData = validateAndGetLeadData();
-    if (!leadData) return;
+    const contactData = validateAndGetContactData();
+    if (!contactData) return;
 
-    onSave(leadData);
+    onSave(contactData);
     resetForm();
     onClose();
   };
 
   const handleSaveAndNew = () => {
-    const leadData = validateAndGetLeadData();
-    if (!leadData) return;
+    const contactData = validateAndGetContactData();
+    if (!contactData) return;
 
-    onSave(leadData);
+    onSave(contactData);
     resetForm();
-    // Keep dialog open for next lead
+    // Keep dialog open for next contact
   };
 
   const handleCancel = () => {
@@ -129,8 +114,10 @@ export default function NewLeadDialog({
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleCancel()}>
       <DialogContent className="w-[840px] max-h-[90vh] p-0 flex flex-col">
         <DialogHeader className="px-6 pt-6 pb-4 border-b border-gray-200 sr-only">
-          <DialogTitle className="text-lg font-semibold">New Lead</DialogTitle>
-          <DialogDescription className="sr-only">New Lead</DialogDescription>
+          <DialogTitle className="text-lg font-semibold">
+            New Contact
+          </DialogTitle>
+          <DialogDescription className="sr-only">New Contact</DialogDescription>
         </DialogHeader>
 
         <div className="rounded-lg overflow-hidden flex-1 flex flex-col">
@@ -138,7 +125,7 @@ export default function NewLeadDialog({
             {/* Header */}
             <div className="border-b border-gray-200 p-4 text-center">
               <h1 className="text-xl leading-[25px] font-normal text-gray-900">
-                New Lead
+                New Contact
               </h1>
             </div>
 
@@ -177,10 +164,12 @@ export default function NewLeadDialog({
                 </div>
 
                 <div className="flex flex-col px-1 mb-2">
-                  <SubSectionTitle title="Company" isRequired />
+                  <SubSectionTitle title="Account Name" isRequired />
                   <DetailInput
-                    value={formData.company || ""}
-                    setValue={(value) => handleInputChange("company", value)}
+                    value={formData.accountName || ""}
+                    setValue={(value) =>
+                      handleInputChange("accountName", value)
+                    }
                     isRequired
                   />
                 </div>
@@ -194,10 +183,10 @@ export default function NewLeadDialog({
                 </div>
 
                 <div className="flex flex-col px-1 mb-2">
-                  <SubSectionTitle title="Website" />
+                  <SubSectionTitle title="Reports To" />
                   <DetailInput
-                    value={formData.website || ""}
-                    setValue={(value) => handleInputChange("website", value)}
+                    value={formData.reportsTo || ""}
+                    setValue={(value) => handleInputChange("reportsTo", value)}
                   />
                 </div>
 
@@ -212,18 +201,7 @@ export default function NewLeadDialog({
                   />
                 </div>
 
-                <div className="flex flex-col px-1 mb-2">
-                  <SubSectionTitle title="Lead Status" isRequired />
-                  <DetailInput
-                    value={formData.leadStatus || ""}
-                    setValue={(value) => handleInputChange("leadStatus", value)}
-                    isRequired
-                    type="select"
-                    options={LEAD_STATUS_OPTIONS}
-                  />
-                </div>
-
-                <DetailFieldSimple label="Lead Owner" value="Dzaka Athif" />
+                <DetailFieldSimple label="Contact Owner" value="Dzaka Athif" />
               </SectionLayout>
 
               {/* Get in Touch Section */}
@@ -246,81 +224,50 @@ export default function NewLeadDialog({
                 </div>
 
                 <div className="flex flex-col px-1 mb-2">
-                  <SubSectionTitle title="Address" size="medium" />
+                  <SubSectionTitle title="Mailing Address" size="medium" />
                   <DetailInput
-                    label="Country"
-                    value={formData.country || ""}
-                    setValue={(value) => handleInputChange("country", value)}
+                    label="Mailing Country"
+                    value={formData.mailingCountry || ""}
+                    setValue={(value) =>
+                      handleInputChange("mailingCountry", value)
+                    }
                     className="px-1"
                     type="select"
                     options={COUNTRY_OPTIONS}
                   />
                   <DetailInput
-                    label="Street"
-                    value={formData.street || ""}
-                    setValue={(value) => handleInputChange("street", value)}
+                    label="Mailing Street"
+                    value={formData.mailingStreet || ""}
+                    setValue={(value) =>
+                      handleInputChange("mailingStreet", value)
+                    }
                     type="textarea"
                   />
                   <div className="grid grid-cols-3 gap-3">
                     <DetailInput
-                      label="City"
-                      value={formData.city || ""}
-                      setValue={(value) => handleInputChange("city", value)}
+                      label="Mailing City"
+                      value={formData.mailingCity || ""}
+                      setValue={(value) =>
+                        handleInputChange("mailingCity", value)
+                      }
                       className="col-span-2 w-full"
                     />
                     <DetailInput
-                      label="State/Province"
-                      value={formData.state || ""}
-                      setValue={(value) => handleInputChange("state", value)}
+                      label="Mailing State/Province"
+                      value={formData.mailingState || ""}
+                      setValue={(value) =>
+                        handleInputChange("mailingState", value)
+                      }
                       className="col-span-1 w-full"
                     />
                   </div>
 
                   <DetailInput
-                    label="Zip Code"
-                    value={""}
-                    setValue={() => {}}
-                  />
-                </div>
-              </SectionLayout>
-
-              {/* Segment Section */}
-              <SectionLayout title="Segment">
-                <div className="flex flex-col px-1 mb-2">
-                  <SubSectionTitle title="No. of Employees" />
-                  <DetailInput
-                    value={formData.numberOfEmployees || ""}
+                    label="Mailing Zip Code"
+                    value={formData.mailingZipCode || ""}
                     setValue={(value) =>
-                      handleInputChange("numberOfEmployees", value)
+                      handleInputChange("mailingZipCode", value)
                     }
-                  />
-                </div>
-
-                <div className="flex flex-col px-1 mb-2">
-                  <SubSectionTitle title="Annual Revenue" />
-                  <DetailInput
-                    value={formData.annualRevenue || ""}
-                    setValue={(value) =>
-                      handleInputChange("annualRevenue", value)
-                    }
-                  />
-                </div>
-                <div className="flex flex-col px-1 mb-2">
-                  <SubSectionTitle title="Lead Source" />
-                  <DetailInput
-                    value={formData.leadSource || ""}
-                    setValue={(value) => handleInputChange("leadSource", value)}
-                    type="select"
-                    options={LEAD_SOURCE_OPTIONS}
-                  />
-                </div>
-                <div className="flex flex-col px-1 mb-2">
-                  <SubSectionTitle title="Industry" />
-                  <DetailInput
-                    value={formData.industry || ""}
-                    setValue={(value) => handleInputChange("industry", value)}
-                    type="select"
-                    options={INDUSTRY_OPTIONS}
                   />
                 </div>
               </SectionLayout>

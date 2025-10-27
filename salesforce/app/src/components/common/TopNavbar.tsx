@@ -6,8 +6,15 @@ import { FaChevronDown, FaXmark } from "react-icons/fa6";
 import { PATH_PREFIX } from "@/lib/consts";
 
 export default function TopNavbar() {
-  const { state, setActiveTab, removeTab, getLead, getContact } =
-    useAppContext();
+  const {
+    state,
+    setActiveTab,
+    removeTab,
+    getLead,
+    getContact,
+    getOpportunity,
+    getCase,
+  } = useAppContext();
   return (
     <div className="fixed top-0 left-[76px] right-0 z-40">
       {/* Blue banner */}
@@ -90,6 +97,14 @@ export default function TopNavbar() {
               } else if (tab.type === "home-listLeads") {
                 tabName = "Recently Viewed";
                 tabSuffix = " | Leads";
+              } else if (tab.type === "home-opportunity" && tab.dataId) {
+                const opportunityData = getOpportunity(tab.dataId);
+                tabName = opportunityData?.opportunityName || "New Opportunity";
+                tabSuffix = " | Opportunity";
+              } else if (tab.type === "home-case" && tab.dataId) {
+                const caseData = getCase(tab.dataId);
+                tabName = caseData?.id?.split("-")[1] || "New Case";
+                tabSuffix = " | Case";
               }
 
               return (

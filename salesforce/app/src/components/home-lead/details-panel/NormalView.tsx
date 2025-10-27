@@ -1,42 +1,8 @@
-import SectionLayout from "./SectionLayout";
-import DetailField from "./DetailField";
-import { useAppContext } from "@/context/AppProvider";
-import { cn } from "@/lib/utils";
-import EditView from "./EditView";
+import SectionLayout from "@/components/common/details-panel/SectionLayout";
+import DetailField from "@/components/common/details-panel/DetailField";
+import type { Lead } from "@/lib/types";
 
-interface DetailsPanelProps {
-  type: "lead" | "contact";
-}
-
-export default function DetailsPanel({ type }: DetailsPanelProps) {
-  const { activeTab } = useAppContext();
-  const isEditDetails = activeTab?.isEditDetails || false;
-
-  return (
-    <div
-      className={cn(
-        " bg-white rounded-[20px] shadow-[0_0_15px_rgba(0,0,0,0.1)]",
-        !isEditDetails && "space-y-3 p-3"
-      )}
-    >
-      {!isEditDetails ? <NormalView type={type} /> : <EditView type={type} />}
-    </div>
-  );
-}
-
-function NormalView({ type }: { type: "lead" | "contact" }) {
-  const { activeTab, getLead, getContact } = useAppContext();
-
-  // Get data based on type
-  const data =
-    type === "lead"
-      ? activeTab?.dataId
-        ? getLead(activeTab.dataId)
-        : undefined
-      : activeTab?.dataId
-      ? getContact(activeTab.dataId)
-      : undefined;
-
+export function NormalView({ data }: { data?: Lead }) {
   // Format address from individual fields
   const formatAddress = () => {
     if (!data) return "";
@@ -50,11 +16,8 @@ function NormalView({ type }: { type: "lead" | "contact" }) {
     return parts.join(", ");
   };
 
-  const ownerLabel = type === "lead" ? "Lead Owner" : "Contact Owner";
-  const ownerValue =
-    type === "lead"
-      ? (data as any)?.leadOwner || "Dzaka Athif"
-      : (data as any)?.contactOwner || "Dzaka Athif";
+  const ownerLabel = "Lead Owner";
+  const ownerValue = data?.leadOwner || "Dzaka Athif";
 
   return (
     <>
@@ -64,12 +27,7 @@ function NormalView({ type }: { type: "lead" | "contact" }) {
         <DetailField label="Title" value={data?.title || ""} />
         <DetailField label="Website" value={data?.website || ""} />
         <DetailField label="Description" value={data?.description || ""} />
-        {type === "lead" && (
-          <DetailField
-            label="Lead Status"
-            value={(data as any)?.leadStatus || ""}
-          />
-        )}
+        <DetailField label="Lead Status" value={data?.leadStatus || ""} />
         <DetailField label={ownerLabel} value={ownerValue} hasAvatar />
       </SectionLayout>
 

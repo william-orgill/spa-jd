@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Sidebar from "./components/common/Sidebar";
 import TopNavbar from "./components/common/TopNavbar";
 import Footer from "./components/common/Footer";
@@ -5,26 +6,55 @@ import HomeDashboard from "./components/home-dashboard/HomeDashboard";
 import HomeLead from "./components/home-lead/HomeLead";
 import HomeContact from "./components/home-contact/HomeContact";
 import HomeListLeads from "./components/home-listLeads/HomeListLeads";
-import NewLeadDialog from "./components/dialogs/new-lead-dialog/NewLeadDialog";
+import HomeOpportunity from "./components/home-opportunity/HomeOpportunity";
+import HomeCase from "./components/home-case/HomeCase";
+import NewLeadDialog from "./components/dialogs/NewLeadDialog";
+import NewContactDialog from "./components/dialogs/NewContactDialog";
+import NewOpportunityDialog from "./components/dialogs/NewOpportunityDialog";
+import NewCaseDialog from "./components/dialogs/case-dialogs/NewCaseDialog";
+import EditCaseDialog from "./components/dialogs/case-dialogs/EditCaseDialog";
+import CloseOpportunityDialog from "./components/dialogs/CloseOpportunityDialog";
 import ConvertLeadDialog from "./components/dialogs/convert-lead-dialog/ConvertLeadDialog";
 import AfterConvertLeadDialog from "./components/dialogs/after-convert-dialog/AfterConvertLeadDialog";
 import { useAppContext } from "./context/AppProvider";
-import type { Lead } from "./lib/types";
+import type {
+  Lead,
+  Contact,
+  Opportunity,
+  Case,
+  OpportunityStage,
+} from "./lib/types";
 
 export default function App() {
   const {
     state,
     addTab,
     addLead,
+    addContact,
+    addOpportunity,
+    addCase,
+    updateOpportunity,
+    updateCase,
+    getCase,
     closeNewLeadDialog,
+    closeNewContactDialog,
+    closeNewOpportunityDialog,
+    closeNewCaseDialog,
+    closeCloseOpportunityDialog,
     convertLead,
     closeConvertLeadDialog,
     openAfterConvertDialog,
     closeAfterConvertDialog,
+    closeEditCaseDialog,
   } = useAppContext();
 
   // Find the active tab
   const activeTab = state.tabs.find((tab) => tab.id === state.activeTabId);
+
+  // Scroll to top when active tab changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [state.activeTabId]);
 
   const handleSaveNewLead = (leadData: Lead) => {
     // Generate a unique ID for the lead
@@ -45,6 +75,68 @@ export default function App() {
     });
   };
 
+  const handleSaveNewContact = (contactData: Contact) => {
+    // Generate a unique ID for the contact
+    const contactId = `contact-${Date.now()}`;
+    const contactWithId = { ...contactData, id: contactId };
+
+    // Add contact to contacts list
+    addContact(contactWithId);
+
+    // Generate a unique ID for the new tab
+    const newTabId = `contact-${contactId}`;
+
+    // Create new tab with contact dataId
+    addTab({
+      id: newTabId,
+      type: "home-contact",
+      dataId: contactId,
+    });
+  };
+
+  const handleSaveNewOpportunity = (opportunityData: Opportunity) => {
+    // Generate a unique ID for the opportunity
+    const opportunityId = `opportunity-${Date.now()}`;
+    const opportunityWithId = { ...opportunityData, id: opportunityId };
+
+    // Add opportunity to opportunities list
+    addOpportunity(opportunityWithId);
+
+    // Generate a unique ID for the new tab
+    const newTabId = `opportunity-${opportunityId}`;
+
+    // Create new tab with opportunity dataId
+    addTab({
+      id: newTabId,
+      type: "home-opportunity",
+      dataId: opportunityId,
+    });
+  };
+
+  const handleSaveNewCase = (caseData: Case) => {
+    // Generate a unique ID for the case
+    const caseId = `case-${Date.now()}`;
+    const caseWithId = { ...caseData, id: caseId };
+
+    // Add case to cases list
+    addCase(caseWithId);
+
+    // Generate a unique ID for the new tab
+    const newTabId = `case-${caseId}`;
+
+    // Create new tab with case dataId
+    addTab({
+      id: newTabId,
+      type: "home-case",
+      dataId: caseId,
+    });
+  };
+
+  const handleSaveEditCase = (caseId: string, updates: Partial<Case>) => {
+    updateCase(caseId, updates);
+    closeEditCaseDialog();
+  };
+
   const handleConvertLead = () => {
     if (state.convertingLeadId) {
       convertLead(state.convertingLeadId);
@@ -63,6 +155,13 @@ export default function App() {
     });
   };
 
+  const handleCloseOpportunity = (closedStage: OpportunityStage) => {
+    if (state.closingOpportunityId) {
+      updateOpportunity(state.closingOpportunityId, { stage: closedStage });
+      closeCloseOpportunityDialog();
+    }
+  };
+
   return (
     <div className="bg-gray-50">
       {/* Sidebar */}
@@ -77,6 +176,8 @@ export default function App() {
         {activeTab?.type === "home-lead" && <HomeLead />}
         {activeTab?.type === "home-contact" && <HomeContact />}
         {activeTab?.type === "home-listLeads" && <HomeListLeads />}
+        {activeTab?.type === "home-opportunity" && <HomeOpportunity />}
+        {activeTab?.type === "home-case" && <HomeCase />}
       </div>
 
       {/* Footer */}
@@ -87,6 +188,42 @@ export default function App() {
         isOpen={state.isNewLeadDialogOpen}
         onClose={closeNewLeadDialog}
         onSave={handleSaveNewLead}
+      />
+
+      {/* New Contact Dialog */}
+      <NewContactDialog
+        isOpen={state.isNewContactDialogOpen}
+        onClose={closeNewContactDialog}
+        onSave={handleSaveNewContact}
+      />
+
+      {/* New Opportunity Dialog */}
+      <NewOpportunityDialog
+        isOpen={state.isNewOpportunityDialogOpen}
+        onClose={closeNewOpportunityDialog}
+        onSave={handleSaveNewOpportunity}
+      />
+
+      {/* Close Opportunity Dialog */}
+      <CloseOpportunityDialog
+        isOpen={state.isCloseOpportunityDialogOpen}
+        onClose={closeCloseOpportunityDialog}
+        onSave={handleCloseOpportunity}
+      />
+
+      {/* New Case Dialog */}
+      <NewCaseDialog
+        isOpen={state.isNewCaseDialogOpen}
+        onClose={closeNewCaseDialog}
+        onSave={handleSaveNewCase}
+      />
+
+      {/* Edit Case Dialog */}
+      <EditCaseDialog
+        isOpen={state.isEditCaseDialogOpen}
+        onClose={closeEditCaseDialog}
+        onSave={handleSaveEditCase}
+        caseData={activeTab?.dataId ? getCase(activeTab.dataId) : undefined}
       />
 
       {/* Convert Lead Dialog */}

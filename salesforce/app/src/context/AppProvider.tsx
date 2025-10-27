@@ -7,18 +7,33 @@ import {
   type ReactNode,
 } from "react";
 import { useDojoState } from "@chakra-dev/dojo-hooks";
-import type { Tab, LeadStatus, Lead, Contact } from "@/lib/types";
+import type {
+  Tab,
+  LeadStatus,
+  Lead,
+  Contact,
+  Opportunity,
+  Case,
+} from "@/lib/types";
 
 interface AppState {
   tabs: Tab[];
   activeTabId: string;
   leads: Lead[];
   contacts: Contact[];
+  opportunities: Opportunity[];
+  cases: Case[];
   isNewLeadDialogOpen: boolean;
+  isNewContactDialogOpen: boolean;
   isConvertLeadDialogOpen: boolean;
   convertingLeadId: string | null;
   isAfterConvertDialogOpen: boolean;
   afterConvertLeadId: string | null;
+  isNewOpportunityDialogOpen: boolean;
+  isCloseOpportunityDialogOpen: boolean;
+  closingOpportunityId: string | null;
+  isNewCaseDialogOpen: boolean;
+  isEditCaseDialogOpen: boolean;
 }
 
 interface AppContextType {
@@ -30,19 +45,35 @@ interface AppContextType {
   updateTabField: (tabId: string, field: keyof Tab, value: unknown) => void;
   getLead: (id: string) => Lead | undefined;
   getContact: (id: string) => Contact | undefined;
+  getOpportunity: (id: string) => Opportunity | undefined;
+  getCase: (id: string) => Case | undefined;
   addLead: (lead: Lead) => void;
   updateLead: (id: string, updates: Partial<Lead>) => void;
   deleteLead: (id: string) => void;
   addContact: (contact: Contact) => void;
   updateContact: (id: string, updates: Partial<Contact>) => void;
+  addOpportunity: (opportunity: Opportunity) => void;
+  updateOpportunity: (id: string, updates: Partial<Opportunity>) => void;
+  addCase: (caseData: Case) => void;
+  updateCase: (id: string, updates: Partial<Case>) => void;
   updateTabLeadStatus: (leadId: string, status: LeadStatus) => void;
   convertLead: (leadId: string) => void;
   openNewLeadDialog: () => void;
   closeNewLeadDialog: () => void;
+  openNewContactDialog: () => void;
+  closeNewContactDialog: () => void;
   openConvertLeadDialog: (leadId: string) => void;
   closeConvertLeadDialog: () => void;
   openAfterConvertDialog: (leadId: string) => void;
   closeAfterConvertDialog: () => void;
+  openNewOpportunityDialog: () => void;
+  closeNewOpportunityDialog: () => void;
+  openCloseOpportunityDialog: (opportunityId: string) => void;
+  closeCloseOpportunityDialog: () => void;
+  openNewCaseDialog: () => void;
+  closeNewCaseDialog: () => void;
+  openEditCaseDialog: () => void;
+  closeEditCaseDialog: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -52,11 +83,19 @@ const initialState: AppState = {
   activeTabId: "home-dashboard",
   leads: [],
   contacts: [],
+  opportunities: [],
+  cases: [],
   isNewLeadDialogOpen: false,
+  isNewContactDialogOpen: false,
   isConvertLeadDialogOpen: false,
   convertingLeadId: null,
   isAfterConvertDialogOpen: false,
   afterConvertLeadId: null,
+  isNewOpportunityDialogOpen: false,
+  isCloseOpportunityDialogOpen: false,
+  closingOpportunityId: null,
+  isNewCaseDialogOpen: false,
+  isEditCaseDialogOpen: false,
 };
 
 export function AppProvider({ children }: { children: ReactNode }) {
@@ -181,6 +220,20 @@ export function AppProvider({ children }: { children: ReactNode }) {
     [state.contacts]
   );
 
+  const getOpportunity = useCallback(
+    (id: string) => {
+      return state.opportunities.find((opportunity) => opportunity.id === id);
+    },
+    [state.opportunities]
+  );
+
+  const getCase = useCallback(
+    (id: string) => {
+      return state.cases.find((caseItem) => caseItem.id === id);
+    },
+    [state.cases]
+  );
+
   // Lead management functions
   const addLead = useCallback(
     (lead: Lead) => {
@@ -237,6 +290,52 @@ export function AppProvider({ children }: { children: ReactNode }) {
     [setState]
   );
 
+  // Opportunity management functions
+  const addOpportunity = useCallback(
+    (opportunity: Opportunity) => {
+      setState((prev) => ({
+        ...prev,
+        opportunities: [...prev.opportunities, opportunity],
+      }));
+    },
+    [setState]
+  );
+
+  const updateOpportunity = useCallback(
+    (id: string, updates: Partial<Opportunity>) => {
+      setState((prev) => ({
+        ...prev,
+        opportunities: prev.opportunities.map((opportunity) =>
+          opportunity.id === id ? { ...opportunity, ...updates } : opportunity
+        ),
+      }));
+    },
+    [setState]
+  );
+
+  // Case management functions
+  const addCase = useCallback(
+    (caseData: Case) => {
+      setState((prev) => ({
+        ...prev,
+        cases: [...prev.cases, caseData],
+      }));
+    },
+    [setState]
+  );
+
+  const updateCase = useCallback(
+    (id: string, updates: Partial<Case>) => {
+      setState((prev) => ({
+        ...prev,
+        cases: prev.cases.map((caseItem) =>
+          caseItem.id === id ? { ...caseItem, ...updates } : caseItem
+        ),
+      }));
+    },
+    [setState]
+  );
+
   const updateTabLeadStatus = useCallback(
     (leadId: string, status: LeadStatus) => {
       setState((prev) => ({
@@ -264,21 +363,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
           salutation: lead.salutation,
           firstName: lead.firstName,
           lastName: lead.lastName,
+          accountName: lead.company,
           title: lead.title,
-          website: lead.website,
+          reportsTo: "",
           description: lead.description,
           contactOwner: lead.leadOwner,
           phone: lead.phone,
           email: lead.email,
-          country: lead.country,
-          street: lead.street,
-          city: lead.city,
-          state: lead.state,
-          zipCode: lead.zipCode,
-          numberOfEmployees: lead.numberOfEmployees,
-          annualRevenue: lead.annualRevenue,
-          leadSource: lead.leadSource,
-          industry: lead.industry,
+          mailingCountry: lead.country,
+          mailingStreet: lead.street,
+          mailingCity: lead.city,
+          mailingState: lead.state,
+          mailingZipCode: lead.zipCode,
         };
 
         // Update lead to mark as converted (keep in list for tab redirection)
@@ -307,6 +403,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const closeNewLeadDialog = useCallback(() => {
     setState((prev) => ({ ...prev, isNewLeadDialogOpen: false }));
+  }, [setState]);
+
+  const openNewContactDialog = useCallback(() => {
+    setState((prev) => ({ ...prev, isNewContactDialogOpen: true }));
+  }, [setState]);
+
+  const closeNewContactDialog = useCallback(() => {
+    setState((prev) => ({ ...prev, isNewContactDialogOpen: false }));
   }, [setState]);
 
   const openConvertLeadDialog = useCallback(
@@ -347,6 +451,49 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }));
   }, [setState]);
 
+  const openNewOpportunityDialog = useCallback(() => {
+    setState((prev) => ({ ...prev, isNewOpportunityDialogOpen: true }));
+  }, [setState]);
+
+  const closeNewOpportunityDialog = useCallback(() => {
+    setState((prev) => ({ ...prev, isNewOpportunityDialogOpen: false }));
+  }, [setState]);
+
+  const openCloseOpportunityDialog = useCallback(
+    (opportunityId: string) => {
+      setState((prev) => ({
+        ...prev,
+        isCloseOpportunityDialogOpen: true,
+        closingOpportunityId: opportunityId,
+      }));
+    },
+    [setState]
+  );
+
+  const closeCloseOpportunityDialog = useCallback(() => {
+    setState((prev) => ({
+      ...prev,
+      isCloseOpportunityDialogOpen: false,
+      closingOpportunityId: null,
+    }));
+  }, [setState]);
+
+  const openNewCaseDialog = useCallback(() => {
+    setState((prev) => ({ ...prev, isNewCaseDialogOpen: true }));
+  }, [setState]);
+
+  const closeNewCaseDialog = useCallback(() => {
+    setState((prev) => ({ ...prev, isNewCaseDialogOpen: false }));
+  }, [setState]);
+
+  const openEditCaseDialog = useCallback(() => {
+    setState((prev) => ({ ...prev, isEditCaseDialogOpen: true }));
+  }, [setState]);
+
+  const closeEditCaseDialog = useCallback(() => {
+    setState((prev) => ({ ...prev, isEditCaseDialogOpen: false }));
+  }, [setState]);
+
   const activeTab = useMemo(() => {
     return state.tabs.find((tab) => tab.id === state.activeTabId);
   }, [state.tabs, state.activeTabId]);
@@ -361,19 +508,35 @@ export function AppProvider({ children }: { children: ReactNode }) {
       updateTabField,
       getLead,
       getContact,
+      getOpportunity,
+      getCase,
       addLead,
       updateLead,
       deleteLead,
       addContact,
       updateContact,
+      addOpportunity,
+      updateOpportunity,
+      addCase,
+      updateCase,
       updateTabLeadStatus,
       convertLead,
       openNewLeadDialog,
       closeNewLeadDialog,
+      openNewContactDialog,
+      closeNewContactDialog,
       openConvertLeadDialog,
       closeConvertLeadDialog,
       openAfterConvertDialog,
       closeAfterConvertDialog,
+      openNewOpportunityDialog,
+      closeNewOpportunityDialog,
+      openCloseOpportunityDialog,
+      closeCloseOpportunityDialog,
+      openNewCaseDialog,
+      closeNewCaseDialog,
+      openEditCaseDialog,
+      closeEditCaseDialog,
     }),
     [
       state,
@@ -384,19 +547,35 @@ export function AppProvider({ children }: { children: ReactNode }) {
       updateTabField,
       getLead,
       getContact,
+      getOpportunity,
+      getCase,
       addLead,
       updateLead,
       deleteLead,
       addContact,
       updateContact,
+      addOpportunity,
+      updateOpportunity,
+      addCase,
+      updateCase,
       updateTabLeadStatus,
       convertLead,
       openNewLeadDialog,
       closeNewLeadDialog,
+      openNewContactDialog,
+      closeNewContactDialog,
       openConvertLeadDialog,
       closeConvertLeadDialog,
       openAfterConvertDialog,
       closeAfterConvertDialog,
+      openNewOpportunityDialog,
+      closeNewOpportunityDialog,
+      openCloseOpportunityDialog,
+      closeCloseOpportunityDialog,
+      openNewCaseDialog,
+      closeNewCaseDialog,
+      openEditCaseDialog,
+      closeEditCaseDialog,
     ]
   );
 
