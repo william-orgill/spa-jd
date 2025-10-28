@@ -45,6 +45,8 @@ interface LinearStateContextType {
   setTaskId: (taskId?: string) => void;
   addComment: (issueId: string, comment: Comment) => void;
   addIssue: (issue: Issue) => void;
+  isNewIssueModalOpen: boolean;
+  setIsNewIssueModalOpen: (isNewIssueModalOpen: boolean) => void;
 }
 
 interface LinearState {
@@ -55,6 +57,8 @@ interface LinearState {
   projects: Project[];
   milestones: Milestone[];
   teamIdentifier: string;
+  taskId?: string;
+  isNewIssueModalOpen: boolean;
 }
 
 const LinearStateContext = createContext<LinearStateContextType | undefined>(
@@ -74,9 +78,9 @@ export function LinearStateProvider({ children }: { children: ReactNode }) {
     projects: initialProjects,
     milestones: initialMilestones,
     teamIdentifier: TEAM_IDENTIFIER,
+    taskId: undefined,
+    isNewIssueModalOpen: false,
   });
-
-  const [taskId, setTaskId] = useState<string | undefined>(undefined);
 
   // Update users context whenever state.users changes
   useEffect(() => {
@@ -85,88 +89,116 @@ export function LinearStateProvider({ children }: { children: ReactNode }) {
 
   const handleReorderIssues = useCallback(
     (reorderedIssues: Issue[]) => {
-      setState({ ...state, issues: reorderedIssues });
+      setState((prevState) => ({ ...prevState, issues: reorderedIssues }));
     },
-    [setState, state]
+    [setState]
   );
 
   const updateIssue = useCallback(
     (issueId: string, updates: Partial<Issue>) => {
-      const updatedIssues = state.issues.map((issue) => {
-        if (issue.id !== issueId) return issue;
+      setState((prevState) => {
+        const updatedIssues = prevState.issues.map((issue) => {
+          if (issue.id !== issueId) return issue;
 
-        const updatedIssue = { ...issue, ...updates };
+          const updatedIssue = { ...issue, ...updates };
 
-        // Track priority changes in activity
-        if (
-          updates.priority !== undefined &&
-          updates.priority !== issue.priority
-        ) {
-          const currentUser = state.users[0];
-          const priorityLabels: Record<string, string> = {
-            none: "No priority",
-            urgent: "Urgent",
-            high: "High",
-            medium: "Medium",
-            low: "Low",
-          };
+          // Track priority changes in activity
+          if (
+            updates.priority !== undefined &&
+            updates.priority !== issue.priority
+          ) {
+            const currentUser = prevState.users[0];
+            const priorityLabels: Record<string, string> = {
+              none: "No priority",
+              urgent: "Urgent",
+              high: "High",
+              medium: "Medium",
+              low: "Low",
+            };
 
-          const newActivity = {
-            id: `activity-${Date.now()}`,
-            actor: currentUser.name,
-            description: `set priority to ${priorityLabels[updates.priority]}`,
-            createdAt: new Date(),
-            icon: "edit" as const,
-          };
+            const newActivity = {
+              id: `activity-${Date.now()}`,
+              actor: currentUser.name,
+              description: `set priority to ${
+                priorityLabels[updates.priority]
+              }`,
+              createdAt: new Date(),
+              icon: "edit" as const,
+            };
 
-          updatedIssue.activities = [...(issue.activities || []), newActivity];
-        }
+            updatedIssue.activities = [
+              ...(issue.activities || []),
+              newActivity,
+            ];
+          }
 
-        return updatedIssue;
+          return updatedIssue;
+        });
+        return { ...prevState, issues: updatedIssues };
       });
-      setState({ ...state, issues: updatedIssues });
     },
-    [setState, state]
+    [setState]
   );
 
   const addComment = useCallback(
     (issueId: string, comment: Comment) => {
-      const updatedIssues = state.issues.map((issue) =>
-        issue.id === issueId
-          ? { ...issue, comments: [...(issue.comments || []), comment] }
-          : issue
-      );
-      setState({ ...state, issues: updatedIssues as Issue[] });
+      setState((prevState) => {
+        const updatedIssues = prevState.issues.map((issue) =>
+          issue.id === issueId
+            ? { ...issue, comments: [...(issue.comments || []), comment] }
+            : issue
+        );
+        return { ...prevState, issues: updatedIssues as Issue[] };
+      });
     },
-    [setState, state]
+    [setState]
   );
 
   const addIssue = useCallback(
     (issue: Issue) => {
-      // Auto-generate issue identifier
-      const numbers = state.issues
-        .map((issue) => parseInt(issue.identifier.split("-")[1]))
-        .filter((num) => !isNaN(num));
-      const nextNumber = numbers.length > 0 ? Math.max(...numbers) + 1 : 1;
-      const generatedIdentifier = `${state.teamIdentifier}-${nextNumber}`;
+      setState((prevState) => {
+        // Auto-generate issue identifier
+        const numbers = prevState.issues
+          .map((issue) => parseInt(issue.identifier.split("-")[1]))
+          .filter((num) => !isNaN(num));
+        const nextNumber = numbers.length > 0 ? Math.max(...numbers) + 1 : 1;
+        const generatedIdentifier = `${prevState.teamIdentifier}-${nextNumber}`;
 
-      const currentUser = state.users[0];
-      const issueWithActivity: Issue = {
-        ...issue,
-        identifier: generatedIdentifier,
-        activities: [
-          {
-            id: `${issue.id}-created`,
-            actor: currentUser.name,
-            description: "created the issue",
-            createdAt: new Date(),
-            icon: "avatar" as const,
-          },
-        ],
-      };
-      setState({ ...state, issues: [...state.issues, issueWithActivity] });
+        const currentUser = prevState.users[0];
+        const issueWithActivity: Issue = {
+          ...issue,
+          identifier: generatedIdentifier,
+          activities: [
+            {
+              id: `${issue.id}-created`,
+              actor: currentUser.name,
+              description: "created the issue",
+              createdAt: new Date(),
+              icon: "avatar" as const,
+            },
+          ],
+        };
+        return {
+          ...prevState,
+          issues: [...prevState.issues, issueWithActivity],
+        };
+      });
     },
-    [setState, state]
+    [setState]
+  );
+
+  const setTaskId = useCallback(
+    (taskId?: string) => {
+      setState((prevState) => ({ ...prevState, taskId }));
+    },
+    [setState]
+  );
+
+  const setIsNewIssueModalOpen = useCallback(
+    (isNewIssueModalOpen: boolean) => {
+      setState((prevState) => ({ ...prevState, isNewIssueModalOpen }));
+    },
+    [setState]
   );
 
   const value = useMemo(
@@ -182,9 +214,11 @@ export function LinearStateProvider({ children }: { children: ReactNode }) {
       addIssue,
       handleReorderIssues,
       updateIssue,
-      taskId,
+      taskId: state.taskId,
       setTaskId,
       addComment,
+      isNewIssueModalOpen: state.isNewIssueModalOpen,
+      setIsNewIssueModalOpen,
     }),
     [
       state.users,
@@ -194,13 +228,15 @@ export function LinearStateProvider({ children }: { children: ReactNode }) {
       state.projects,
       state.milestones,
       state.teamIdentifier,
+      state.taskId,
       assigneeProgress,
       addIssue,
       handleReorderIssues,
       updateIssue,
-      taskId,
       setTaskId,
       addComment,
+      state.isNewIssueModalOpen,
+      setIsNewIssueModalOpen,
     ]
   );
 
