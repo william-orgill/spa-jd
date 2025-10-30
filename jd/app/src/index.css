@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+.text-tiny {
+  font-size: 12px;
+}
+
+.text-color-base {
+  color: #505259;
+}
