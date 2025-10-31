@@ -28,40 +28,43 @@ export default function HeaderSearch() {
   };
 
   return (
-    <div
-      className="mx-auto mt-6 px-4 pt-4 pb-2 flex flex-col items-center"
-    >
-      <div className="flex items-start w-full">
-        {/* Logo column */}
+    <div className="mx-auto mt-6 px-4 pt-4 pb-2 flex flex-col items-center">
+      <div className="w-full flex flex-col items-center">
+        {/* Search bar and nav (centered, max-w-1040px, responsive) */}
         <div
-          className="flex-shrink-0 flex flex-col items-center justify-center h-full pr-8 pt-1"
-          style={{ minWidth: 140 }}
+          className="relative w-full flex flex-col items-center"
+          style={{
+            maxWidth: 1010,
+            marginLeft: 140,
+            marginRight: 140,
+            minWidth: 0,
+            width: "100%",
+          }}
         >
+          {/* Absolutely positioned Logo to the left, vertically centered */}
           <button
-            className="cursor-pointer w-full flex justify-start items-center"
-            onClick={() => setState((p) => ({ ...p, page: "home" }))}
+            className="absolute -left-70 top-1/2 -translate-y-1/2 flex items-center px-0 sm:px-2 z-10"
             style={{ height: 52 }}
+            onClick={() => setState((p) => ({ ...p, page: "home" }))}
+            tabIndex={0}
           >
-            <img src={logo} alt="京东" className="h-17 w-auto" />
+            <img src={logo} alt="京东" className="h-17 w-auto" style={{ objectFit: "contain" }} />
             <span className="sr-only">京东首页</span>
           </button>
-        </div>
-        {/* Search bar and nav (centered, max-w-1040px, shrink/grow with site) */}
-        <div className="flex-1 flex flex-col min-w-0 items-center">
+
+          {/* Content wrapper, enough left padding for logo */}
           <div
-            className="w-full flex flex-col"
-            style={{
-              maxWidth: 1040,
-              // place to adjust responsive width before max is reached:
-              // width: "100%", minWidth: 360, ... (set as you like)
-            }}
+            className="w-full flex flex-col items-center"
           >
-            {/* Search row & AI button */}
-            <div className="flex items-center">
+            {/* Responsive search + AI row */}
+            <div className="flex w-full items-center">
+              {/* Search bar: responsive max/min width, centered */}
               <div
-                className="flex items-center bg-white rounded-lg overflow-hidden shadow px-[2px] h-10 flex-1"
+                className="flex items-center bg-white rounded-lg overflow-hidden shadow px-[2px] h-10 flex-1 min-w-0"
                 style={{
                   width: "100%",
+                  minWidth: 180,
+                  transition: "max-width .18s",
                 }}
               >
                 {/* Category Dropdown */}
@@ -69,16 +72,17 @@ export default function HeaderSearch() {
                   全部
                   <FiChevronDown size={14} className="text-gray-400 ml-[2px]" />
                 </div>
-                {/* Divider between category and input */}
+                {/* Divider */}
                 <div className="w-[1px] h-6 bg-gray-100 mx-1" />
                 {/* Search Input */}
                 <input
-                  className="flex-1 px-2 outline-none text-sm bg-transparent h-full"
-                  style={{ minWidth: 0 }}
+                  className="flex-1 px-2 outline-none text-sm bg-transparent h-full min-w-0"
                   placeholder="电脑 显卡"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && onSubmitSearch()}
+                  // Make input shrink with container
+                  style={{ minWidth: 0 }}
                 />
                 {/* Camera Icon */}
                 <button
@@ -147,19 +151,62 @@ export default function HeaderSearch() {
         <div className="flex items-center gap-3">
           {/* Left 3 boxes */}
           <div className="flex gap-3">
-            <div className="bg-white rounded-lg shadow h-25 w-25 min-w-0 border border-[#ececec]" />
-            <div className="bg-white rounded-lg shadow h-25 w-25 min-w-0 border border-[#ececec]" />
-            <div className="bg-white rounded-lg shadow h-25 w-25 min-w-0 border border-[#ececec]" />
+            {/* Each small card NOW COPYING THE SECOND ONE */}
+            <div className="relative bg-white rounded-lg h-25 w-25 min-w-0 border border-[#d6d7dc] shadow-sm flex flex-col overflow-hidden">
+              <div className="flex-1" />
+              <div className="absolute -left-1 bottom-0 w-27 flex justify-center ">
+                <div className="bg-[#eb1324] text-white text-xs font-bold rounded-[4px] py-1 mb-1 w-[86%] text-center shadow-sm tracking-wider">
+                  热卖尖货
+                </div>
+              </div>
+            </div>
+            <div className="relative bg-white rounded-lg h-25 w-25 min-w-0 border border-[#d6d7dc] shadow-sm flex flex-col overflow-hidden">
+              <div className="flex-1" />
+              <div className="absolute -left-1 bottom-0 w-27 flex justify-center ">
+                <div className="bg-[#eb1324] text-white text-xs font-bold rounded-[4px] py-1 mb-1 w-[86%] text-center shadow-sm tracking-wider">
+                  买自营省无忧
+                </div>
+              </div>
+            </div>
+            <div className="relative bg-white rounded-lg h-25 w-25 min-w-0 border border-[#d6d7dc] shadow-sm flex flex-col overflow-hidden">
+              <div className="flex-1" />
+              <div className="absolute -left-1 bottom-0 w-27 flex justify-center ">
+                <div className="bg-[#eb1324] text-white text-xs font-bold rounded-[4px] py-1 mb-1 w-[86%] text-center shadow-sm tracking-wider">
+                  抢神券24.5%
+                </div>
+              </div>
+            </div>
           </div>
           {/* Center large box */}
-          <div
-            className="bg-white rounded-lg shadow h-25 w-85 min-w-0 border border-[#ececec]"
-          />
+          <div className="relative bg-white rounded-lg h-25 w-85 min-w-0 border border-[#d6d7dc] shadow-sm flex items-center justify-center overflow-hidden">
+            {/* No content, just blank (could insert promo banner if wanted) */}
+          </div>
           {/* Right 3 boxes */}
           <div className="flex gap-3">
-            <div className="bg-white rounded-lg shadow h-25 w-25 min-w-0 border border-[#ececec]" />
-            <div className="bg-white rounded-lg shadow h-25 w-25 min-w-0 border border-[#ececec]" />
-            <div className="bg-white rounded-lg shadow h-25 w-25 min-w-0 border border-[#ececec]" />
+            <div className="relative bg-white rounded-lg h-25 w-25 min-w-0 border border-[#d6d7dc] shadow-sm flex flex-col overflow-hidden">
+              <div className="flex-1" />
+              <div className="absolute -left-1 bottom-0 w-27 flex justify-center ">
+                <div className="bg-[#eb1324] text-white text-xs font-bold rounded-[4px] py-1 mb-1 w-[86%] text-center shadow-sm tracking-wider">
+                  热搜爆品210
+                </div>
+              </div>
+            </div>
+            <div className="relative bg-white rounded-lg h-25 w-25 min-w-0 border border-[#d6d7dc] shadow-sm flex flex-col overflow-hidden">
+              <div className="flex-1" />
+              <div className="absolute -left-1 bottom-0 w-27 flex justify-center ">
+                <div className="bg-[#eb1324] text-white text-xs font-bold rounded-[4px] py-1 mb-1 w-[86%] text-center shadow-sm tracking-wider">
+                  明星热抢榜
+                </div>
+              </div>
+            </div>
+            <div className="relative bg-white rounded-lg h-25 w-25 min-w-0 border border-[#d6d7dc] shadow-sm flex flex-col overflow-hidden">
+              <div className="flex-1" />
+              <div className="absolute -left-1 bottom-0 w-27 flex justify-center ">
+                <div className="bg-[#eb1324] text-white text-xs font-bold rounded-[4px] py-1 mb-1 w-[86%] text-center shadow-sm tracking-wider">
+                  家一站购
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -2,6 +2,8 @@ import { FiChevronDown } from "react-icons/fi";
 import cart from "../icons/cart.png";
 
 export default function Topbar() {
+  // Common hover style
+  const hoverClass = "hover:text-[#e1251b] transition-colors";
   return (
     <div className="w-full bg-white text-xs text-gray-500 relative z-10">
       <div
@@ -20,16 +22,16 @@ export default function Topbar() {
             minWidth: 0,
             flexShrink: 0,
             whiteSpace: "nowrap",
-            marginLeft: "max(42px, calc((100vw - 1450px) / 2))",
+            marginLeft: "max(42px, calc((100vw - 1550px) / 2))",
           }}
         >
-          <div className="flex items-center cursor-pointer gap-1">
+          <div className={`flex items-center cursor-pointer gap-1 ${hoverClass}`}>
             中国大陆版 - 海外
-            <FiChevronDown size={8} className="text-black"/>
+            <FiChevronDown size={8} className="text-black" />
           </div>
-          <span className="cursor-pointer">你好，请登录</span>
-          <span className="cursor-pointer text-red-500">免费注册</span>
-          <span className="cursor-pointer">切换至企业版</span>
+          <span className={`cursor-pointer ${hoverClass}`}>你好，请登录</span>
+          <span className={`cursor-pointer text-red-500 ${hoverClass}`}>免费注册</span>
+          <span className={`cursor-pointer ${hoverClass}`}>切换至企业版</span>
         </div>
         <div
           className="flex items-center space-x-5"
@@ -37,10 +39,10 @@ export default function Topbar() {
             minWidth: 0,
             flexShrink: 0,
             whiteSpace: "nowrap",
-            marginRight: "max(42px, calc((100vw - 1450px) / 2))",
+            marginRight: "max(42px, calc((100vw - 1550px) / 2))",
           }}
         >
-          <span className="cursor-pointer flex items-center gap-1">
+          <span className={`cursor-pointer flex items-center gap-1 ${hoverClass}`}>
             <img
               src={cart}
               alt="购物车"
@@ -52,23 +54,23 @@ export default function Topbar() {
             />
             购物车
           </span>
-          <span className="cursor-pointer">我的订单</span>
-          <span className="cursor-pointer flex items-center gap-1">
-            我的京东 <FiChevronDown size={8} className="text-black"/>
+          <span className={`cursor-pointer ${hoverClass}`}>我的订单</span>
+          <span className={`cursor-pointer flex items-center gap-1 ${hoverClass}`}>
+            我的京东 <FiChevronDown size={8} className="text-black" />
           </span>
-          <span className="cursor-pointer flex items-center gap-1">
-            企业采购 <FiChevronDown size={8} className="text-black"/>
+          <span className={`cursor-pointer flex items-center gap-1 ${hoverClass}`}>
+            企业采购 <FiChevronDown size={8} className="text-black" />
           </span>
-          <span className="cursor-pointer flex items-center gap-1">
-            商家服务 <FiChevronDown size={8} className="text-black"/>
+          <span className={`cursor-pointer flex items-center gap-1 ${hoverClass}`}>
+            商家服务 <FiChevronDown size={8} className="text-black" />
           </span>
-          <span className="cursor-pointer flex items-center gap-1">
-            网站导航 <FiChevronDown size={8} className="text-black"/>
+          <span className={`cursor-pointer flex items-center gap-1 ${hoverClass}`}>
+            网站导航 <FiChevronDown size={8} className="text-black" />
           </span>
-          <span className="cursor-pointer flex items-center gap-1">
-            手机京东 <FiChevronDown size={8} className="text-black"/>
+          <span className={`cursor-pointer flex items-center gap-1 ${hoverClass}`}>
+            手机京东 <FiChevronDown size={8} className="text-black" />
           </span>
-          <span className="cursor-pointer">网站无障碍</span>
+          <span className={`cursor-pointer ${hoverClass}`}>网站无障碍</span>
         </div>
       </div>
     </div>

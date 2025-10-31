@@ -23,27 +23,35 @@ export default function RightToolbar() {
     },
   ];
 
-  // Use CSS filter to invert white image to black
-  const invertToBlackStyle = {
-    filter: "invert(1) brightness(0) saturate(100%)",
-  };
-
   return (
     <div className="fixed right-0 top-1/2 -translate-y-1/2 z-20">
-      <div className="bg-white rounded-l-lg shadow flex flex-col py-2 items-center space-y-4 px-1">
-        {info.map((t) => (
-          <div key={t.name} className="flex flex-col items-center cursor-pointer group">
-            <img
-              src={t.icon}
-              alt={t.name}
-              className="w-[18.1px] h-[18.1px] mb-1"
-              style={invertToBlackStyle}
-            />
-            <span className="text-[11px] text-color-base ">{t.name}</span>
-          </div>
-        ))}
+      <div className="bg-white rounded-l-lg shadow flex flex-col items-center">
+        {info.map((t, idx) => {
+          // Determine conditional classes for special hover rounded corners
+          const hoverRounded =
+            idx === 0
+              ? "hover:rounded-tl-lg"
+              : idx === info.length - 1
+              ? "hover:rounded-bl-lg"
+              : "";
+
+          return (
+            <div
+              key={t.name}
+              className={
+                `flex flex-col items-center cursor-pointer hover:bg-red-500 py-2 px-1 group w-full ${hoverRounded}`
+              }
+            >
+              <img
+                src={t.icon}
+                alt={t.name}
+                className="w-[20px] h-[20px] mb-1 filter invert group-hover:invert-0 transition-all"
+              />
+              <span className="text-[11px] text-gray-700 group-hover:text-white transition-colors">{t.name}</span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 }
-

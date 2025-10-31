@@ -5,6 +5,8 @@ import Topbar from "./Topbar";
 import HeroBackground from "./HeroBackground";
 import HeaderSearch from "./HeaderSearch";
 import MainGrid from "./MainGrid";
+import ProductListing from "./ProductListing";
+import Footer from "./Footer";
 import RightToolbar from "./RightToolbar";
 
 const sampleProducts: Product[] = [
@@ -69,7 +71,13 @@ export default function JDApp() {
 
   // header and hero background moved to dedicated components
 
-  const home = <MainGrid />;
+  const home = (
+    <>
+      <MainGrid />
+      <ProductListing />
+      <Footer />
+    </>
+  );
 
   const searchResults = (() => {
     const q = state.searchQuery.toLowerCase();
@@ -151,7 +159,7 @@ export default function JDApp() {
   );
 
   return (
-    <div className="min-h-screen bg-[#ffffff] relative">
+    <div className="min-h-screen bg-[#f7f7fb] relative">
       <HeroBackground />
       <Topbar />
       <div className="relative z-10">
