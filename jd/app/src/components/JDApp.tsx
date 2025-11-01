@@ -1,5 +1,4 @@
-import { useMemo } from "react";
-import { useAppState } from "../state/appState";
+import { useAppContext } from "../context/AppProvider";
 import type { Product } from "../state/appState";
 import Topbar from "./Topbar";
 import HeroBackground from "./HeroBackground";
@@ -9,6 +8,7 @@ import ProductListing from "./ProductListing";
 import ProductDetail from "./ProductDetail";
 import Footer from "./Footer";
 import RightToolbar from "./RightToolbar";
+import CartDropdown from "./CartDropdown";
 
 const sampleProducts: Product[] = [
   {
@@ -46,36 +46,22 @@ const sampleProducts: Product[] = [
 ];
 
 export default function JDApp() {
-  const [state, setState] = useAppState();
+  const { state, setPage, setSelectedProductId } = useAppContext();
 
   const products = sampleProducts;
 
-  const selectedProduct = useMemo(
-    () => products.find((p) => p.id === state.selectedProductId) || null,
-    [state.selectedProductId]
-  );
-
-  const addToCart = (productId: string) => {
-    setState((prev) => {
-      const existing = prev.cart.find((c) => c.productId === productId);
-      let next = prev.cart;
-      if (existing) {
-        next = prev.cart.map((c) =>
-          c.productId === productId ? { ...c, qty: c.qty + 1 } : c
-        );
-      } else {
-        next = [...prev.cart, { productId, qty: 1 }];
-      }
-      return { ...prev, cart: next };
-    });
-  };
-
   // header and hero background moved to dedicated components
+
+  // TIP: Pass down an "onProductClick" prop to ProductListing
+  const handleProductClick = (productId: string) => {
+    setSelectedProductId(productId);
+    setPage("product");
+  };
 
   const home = (
     <>
       <MainGrid />
-      <ProductListing />
+      <ProductListing onProductClick={handleProductClick} />
       <Footer />
     </>
   );
@@ -93,9 +79,10 @@ export default function JDApp() {
             <button
               key={p.id}
               className="bg-white rounded shadow text-left"
-              onClick={() =>
-                setState((prev) => ({ ...prev, page: "product", selectedProductId: p.id }))
-              }
+              onClick={() => {
+                setSelectedProductId(p.id);
+                setPage("product");
+              }}
             >
               <img src={p.image} alt={p.title} className="w-full h-40 object-cover rounded-t" />
               <div className="p-3">
@@ -111,40 +98,70 @@ export default function JDApp() {
 
   const productPage = <ProductDetail />;
 
+  // Mock product for cart page (same as ProductListing)
+  const mockProductForCart = {
+    id: "1",
+    title: "正压式长管空气呼吸器防吸毒毒防全面罩井下可通话带通讯作业面具 通...",
+    price: 3629.00,
+    image: "",
+  };
+
   const cartPage = (
     <div className="max-w-4xl mx-auto p-6 relative z-10">
-      <h2 className="text-xl font-semibold mb-4">Shopping Cart</h2>
+      <h2 className="text-xl font-semibold mb-4">购物车</h2>
       {state.cart.length === 0 ? (
-        <div className="text-gray-500">Your cart is empty.</div>
+        <div className="text-gray-500">您的购物车是空的</div>
       ) : (
         <div className="space-y-4">
-          {state.cart.map((it) => {
-            const p = products.find((pp) => pp.id === it.productId)!;
-            return (
-              <div key={it.productId} className="flex items-center gap-4 bg-white p-3 rounded shadow">
-                <img src={p.image} alt={p.title} className="w-20 h-20 object-cover rounded" />
-                <div className="flex-1">
-                  <div className="font-medium">{p.title}</div>
-                  <div className="text-sm text-gray-500">Qty: {it.qty}</div>
-                </div>
-                <div className="text-[#e1251b] font-bold">${(p.price * it.qty).toFixed(2)}</div>
+          {state.cart.map((it) => (
+            <div key={it.productId} className="flex items-center gap-4 bg-white p-3 rounded shadow">
+              <div className="w-20 h-20 bg-gray-100 rounded flex items-center justify-center flex-shrink-0">
+                <span className="text-xs text-gray-400">图片</span>
               </div>
-            );
-          })}
+              <div className="flex-1">
+                <div className="font-medium">{mockProductForCart.title}</div>
+                <div className="text-sm text-gray-500 mt-1">
+                  数量: {it.qty}
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="text-[#e1251b] font-bold text-lg">
+                  ¥{(mockProductForCart.price * it.qty).toFixed(2)}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>
   );
 
+  const handleNavigateHome = () => {
+    setPage("home");
+  };
+
   return (
     <div className="min-h-screen bg-[#f7f7fb] relative">
-      {state.page !== "product" && state.page !== "cart" && (
+      {/* Dark overlay for the whole website */}
+      {/* <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 z-[9999]"
+        style={{
+          background: "rgba(34, 34, 51, 0.32)",
+        }}
+      /> */}
+      {state.page !== "cart" && (
         <>
-          <HeroBackground />
-          <Topbar />
-          <div className="relative z-10">
-            <HeaderSearch />
-          </div>
+          {state.page !== "product" && <HeroBackground />}
+          <Topbar
+            isProductPage={state.page === "product"}
+            onNavigateHome={handleNavigateHome}
+          />
+          {state.page !== "product" && (
+            <div className="relative z-10">
+              <HeaderSearch />
+            </div>
+          )}
         </>
       )}
       {state.page === "home" && home}
@@ -153,9 +170,9 @@ export default function JDApp() {
       )}
       {state.page === "product" && productPage}
       {state.page === "cart" && cartPage}
+      <CartDropdown />
       <RightToolbar />
     </div>
   );
 }
-
 

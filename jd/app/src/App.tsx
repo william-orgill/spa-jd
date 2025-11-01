@@ -1,7 +1,10 @@
 import JDApp from "./components/JDApp";
+import { AppProvider } from "./context/AppProvider";
 
 export default function App() {
   return (
-    <JDApp />
+    <AppProvider>
+      <JDApp />
+    </AppProvider>
   );
 }

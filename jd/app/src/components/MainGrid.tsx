@@ -117,7 +117,7 @@ const subsidyProducts = [
   { img: "https://m.360buyimg.com/seckillcms/s150x150_jfs/t20270809/110760/14/39714/60663/66b5ba47Fbb0cbb95/00e5b6c483e5f35b.jpg", price: "¥38.5", subsidy: "已补10.78元" },
 ];
 
-// Bottom row sections -- UPDATED TO ONLY 4, last two are combined ("9.9包邮" & "1元也包邮" into one section)
+// Bottom row sections -- all except 'special' should use 'twoItems' style
 const bottomSections = [
   {
     title: "家电家居",
@@ -152,29 +152,29 @@ const bottomSections = [
     type: "twoItems",
     leftItem: {
       img: "https://m.360buyimg.com/seckillcms/s250x250_jfs/t1/334891/16/26173/43449/68ff1901Ff393fa2e/b9113ca998a2998a.jpg",
-      price: "¥111.9 秒杀价"
+      price: "¥111.9",
+      text: "秒杀价"
     },
     rightItem: {
       img: "https://m.360buyimg.com/seckillcms/s250x250_jfs/t1/218559/33/44626/20686/670ceaffF1a2ad89f/240775b0f22c332b.jpg",
-      price: "¥61.5 秒杀价"
+      price: "¥61.5",
+      text: "秒杀价"
     }
   },
   {
-    title: "9.9包邮&1元也包邮",
-    subtitle: null,
-    type: "doubleSingleImage",
-    items: [
-      {
-        img: "https://img30.360buyimg.com/jdcms/s77x77_jfs/t1/215184/20/288/61722/6167cc07E6a92e249/d7bfeea139648391.jpg.avif",
-        price: "¥20.6",
-        label: "9.9包邮",
-      },
-      {
-        img: "https://img10.360buyimg.com/jdcms/s77x77_jfs/t1/296276/13/25662/107849/68888d6dF463445ca/18ea8aa9614676d9.jpg.avif",
-        price: "¥0.01",
-        label: "1元也包邮",
-      }
-    ]
+    title: "9.9包邮",
+    subtitle: "1元也包邮",
+    type: "twoItems",
+    leftItem: {
+      img: "https://img30.360buyimg.com/jdcms/s77x77_jfs/t1/215184/20/288/61722/6167cc07E6a92e249/d7bfeea139648391.jpg.avif",
+      price: "¥20.6",
+      label: "9.9包邮"
+    },
+    rightItem: {
+      img: "https://img10.360buyimg.com/jdcms/s77x77_jfs/t1/296276/13/25662/107849/68888d6dF463445ca/18ea8aa9614676d9.jpg.avif",
+      price: "¥0.01",
+      label: "1元也包邮"
+    }
   },
 ];
 
@@ -302,9 +302,9 @@ export default function MainGrid() {
                   <FiChevronRight size={24} className="text-white" />
                 </button>
 
-                <div className="flex flex-col justify-between h-full pl-6 py-6 flex-1 max-w-[60%]">
+                <div className="flex flex-col justify-between h-full pl-4 py-2 flex-1 max-w-[60%]">
                   <div>
-                    <div className="text-white text-[24px] leading-[28px] font-extrabold mb-[6px] transition-opacity duration-300 drop-shadow-lg">
+                    <div className="text-white text-[24px] leading-[28px] font-extrabold mb-[6px] mt-5 transition-opacity duration-300 drop-shadow-lg">
                       {carouselPages[currentPage].title}
                       {carouselPages[currentPage].subtitle && (
                         <>
@@ -318,7 +318,7 @@ export default function MainGrid() {
                     </div>
                   </div>
                   {/* Dots - now closer together */}
-                  <div className="flex mt-4">
+                  <div className="flex mt-4 -ml-1">
                     {carouselPages.map((_, index) => (
                       <div
                         key={index}
@@ -344,9 +344,9 @@ export default function MainGrid() {
                   </div>
                 </div>
               </div>
-              {/* Top right: 国家补贴 × 百亿补贴 section */}
+              {/* Top right section */}
               <div
-                className="col-span-2 h-[160px] bg-[#F7F8FC] rounded-lg p-3 flex flex-col"
+                className="col-span-2 h-[160px] bg-[#F7F8FC] rounded-lg p-3 flex flex-col cursor-pointer"
                 style={{
                   gridRow: "1",
                   gridColumn: "3 / span 2",
@@ -355,7 +355,7 @@ export default function MainGrid() {
                 {/* Header */}
                 <div className="flex justify-between items-center mb-2">
                   <div className="text-base font-bold text-[#333]">国家补贴 × 百亿补贴</div>
-                  <div className="bg-[#e1251b] text-white text-xs px-2 py-0.5 rounded">限时补贴</div>
+                  <div className="text-[13px] text-[#b8860b]">限时补贴</div>
                 </div>
                 {/* Products */}
                 <div className="flex flex-row gap-3 flex-1">
@@ -365,13 +365,13 @@ export default function MainGrid() {
                       className="flex flex-col items-center flex-1"
                       style={{ minWidth: 0 }}
                     >
-                      <img src={prod.img} alt="" className="w-full h-20 object-contain mb-1" style={{ mixBlendMode: 'multiply' }} />
+                      <img src={prod.img} alt="" className="w-full h-18 object-contain mb-1" style={{ mixBlendMode: 'multiply' }} />
                       {/* Reduce the gap between img and price to avoid text going outside the div, also prevent overflow */}
-                      <div className="text-[#e1251b] text-sm font-bold leading-tight text-center break-words" style={{ marginTop: 0 }}>
+                      <div className="text-[#e1251b] text-[16px] font-bold leading-tight text-center break-words" style={{ marginTop: 0 }}>
                         {prod.price}
                       </div>
                       {prod.subsidy && (
-                        <div className="text-gray-500 text-xs leading-tight mt-1 text-center break-words" style={{marginTop: 2, maxWidth: "100%"}}>
+                        <div className="text-[12px] text-[#e1251b] leading-tight mt-1 text-center break-words" style={{marginTop: 2, maxWidth: "100%"}}>
                           {prod.subsidy}
                         </div>
                       )}
@@ -383,19 +383,20 @@ export default function MainGrid() {
               {bottomSections.map((section, i) => (
                 <div
                   key={i}
-                  className="bg-[#F7F8FC] rounded-lg p-3 h-[160px] flex flex-col"
+                  className="bg-[#F7F8FC] rounded-lg p-3 h-[160px] flex flex-col cursor-pointer"
                   style={{
                     gridRow: "2",
                     gridColumn: `${i + 1}`,
                   }}
                 >
                   {/* Title and subtitle */}
-                  <div className="mb-2">
-                    <div className="text-sm font-bold text-[#333]">{section.title}</div>
-                    {section.subtitle && <div className="text-xs text-[#b8860b]">{section.subtitle}</div>}
+                  <div className="mb-2 flex items-center justify-between mr-1 ml-1">
+                    <div className="text-[16px] font-bold text-[#333]">{section.title}</div>
+                    {section.subtitle && <div className="text-[13px] text-[#b8860b]">{section.subtitle}</div>}
                   </div>
                   {/* Content based on type */}
                   <div className="flex-1">
+
                     {section.type === "special" && section.leftBox && section.rightBox && (
                       <div className="grid grid-cols-2 gap-2 h-full">
                         {/* Left red box */}
@@ -412,36 +413,48 @@ export default function MainGrid() {
                         {/* Right image */}
                         <div className="flex flex-col items-center justify-between">
                           <img src={section.rightBox.img} alt="" className="h-16 object-contain" style={{ mixBlendMode: 'multiply' }} />
-                          <div className="text-[#e1251b] text-xs font-bold">{section.rightBox.price}</div>
+                          <div className="text-[#e1251b] text-[16px] font-semibold">{section.rightBox.price}</div>
                         </div>
                       </div>
                     )}
-                    {section.type === "twoItems" && section.leftItem && section.rightItem && (
+
+                    {section.type !== "special" && section.leftItem && section.rightItem && (
                       <div className="grid grid-cols-2 gap-2 h-full">
                         <div className="flex flex-col items-center">
-                          <img src={section.leftItem.img} alt="" className="h-20 object-contain mb-1" style={{ mixBlendMode: 'multiply' }} />
-                          {section.leftItem.text && <div className="text-xs text-[#333]">{section.leftItem.text}</div>}
-                          {section.leftItem.price && <div className="text-[#e1251b] text-xs">{section.leftItem.price}</div>}
+                          <img
+                            src={section.leftItem.img}
+                            alt={section.leftItem.label || ""}
+                            className="h-20 object-contain mb-1 rounded-md"
+                            style={{ mixBlendMode: "multiply" }}
+                          />
+                          <div className="flex items-center gap-1">
+                            {section.leftItem.price && (
+                              <div className="text-[#e1251b] text-[16px] font-semibold">{section.leftItem.price}</div>
+                            )}
+                            {section.leftItem.text && (
+                              <div className="text-[14px] text-[#e1251b]">{section.leftItem.text}</div>
+                            )}
+                          </div>
                         </div>
                         <div className="flex flex-col items-center">
-                          <img src={section.rightItem.img} alt="" className="h-20 object-contain mb-1" style={{ mixBlendMode: 'multiply' }} />
-                          {section.rightItem.text && <div className="text-xs text-[#333]">{section.rightItem.text}</div>}
-                          {section.rightItem.price && <div className="text-[#e1251b] text-xs">{section.rightItem.price}</div>}
+                          <img
+                            src={section.rightItem.img}
+                            alt={section.rightItem.label || ""}
+                            className="h-20 object-contain mb-1 rounded-md"
+                            style={{ mixBlendMode: "multiply" }}
+                          />
+                          <div className="flex items-center gap-1">
+                            {section.rightItem.price && (
+                              <div className="text-[#e1251b] text-[16px] font-semibold">{section.rightItem.price}</div>
+                            )}
+                            {section.rightItem.text && (
+                              <div className="text-[14px] text-[#e1251b]">{section.rightItem.text}</div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     )}
-                    {/* Combined double single image section */}
-                    {section.type === "doubleSingleImage" && section.items && (
-                      <div className="flex flex-row items-center justify-between h-full gap-2">
-                        {section.items.map((item, idx) => (
-                          <div key={idx} className="flex flex-col items-center justify-center flex-1">
-                            <img src={item.img} alt={item.label} className="h-16 object-contain mb-1" style={{ mixBlendMode: 'multiply' }} />
-                            <div className="text-[13px] text-[#333] font-semibold mb-1">{item.label}</div>
-                            <div className="text-[#e1251b] text-sm font-bold">{item.price}</div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+
                   </div>
                 </div>
               ))}
@@ -450,120 +463,167 @@ export default function MainGrid() {
         </div>
 
         {/* Right login/entry panel */}
-        <div className="bg-[#F7F8FC] rounded-lg p-3 h-full flex flex-col" style={{ width: 248 }}>
-          {/* Profile section */}
-          <div className="mb-3">
-            <div className="flex items-center gap-2 mb-3 relative">
-              <img src={"https://img10.360buyimg.com/img/jfs/t1/346074/6/4118/8195/68c92b91F1dc4cd05/32f8deaab0e08085.png.avif"} alt="avatar" className="w-[40px] h-[40px] rounded-full" />
-              <div className="flex-1">
-                <div className="text-sm font-medium text-[#333]">7zlu3uoc0...</div>
-                <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
-                  <span className="cursor-pointer">切换账号</span>
-                  <span className="text-gray-300">|</span>
-                  <span className="cursor-pointer">退出</span>
+        <div className="flex flex-col gap-2">
+          <div className="flex-2 bg-[#fff7f7] rounded-lg p-3 flex flex-col" style={{ width: 248 }}>
+            {/* Profile section */}
+            <div className="mb-3">
+              <div className="flex items-center gap-2 mb-3 relative">
+                <img src={"https://img10.360buyimg.com/img/jfs/t1/346074/6/4118/8195/68c92b91F1dc4cd05/32f8deaab0e08085.png.avif"} alt="avatar" className="w-[40px] h-[40px] rounded-full" />
+                <div className="flex-1">
+                  <div className="text-sm font-bold text-[#333]">7zlu3uoc0...</div>
+                  <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
+                    <span className="cursor-pointer">切换账号</span>
+                    <span className="text-gray-300">|</span>
+                    <span className="cursor-pointer">退出</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Account balances */}
+              <div className="grid grid-cols-4 gap-2 pb-2 border-b border-gray-200">
+                <div className="flex flex-col items-center">
+                  <div className="text-base font-bold text-[#333]">2</div>
+                  <div className="text-xs text-black">优惠券</div>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="text-base font-bold text-[#333]">赚京豆</div>
+                  <div className="text-xs text-black">京豆</div>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="text-base font-bold text-[#333]">¥3</div>
+                  <div className="text-xs text-black">红包</div>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="text-base font-bold text-[#333]">购卡返</div>
+                  <div className="text-xs text-black">京东E卡</div>
                 </div>
               </div>
             </div>
-            
-            {/* Account balances */}
+
+            {/* Order status icons */}
             <div className="grid grid-cols-4 gap-2 mb-3">
-              <div className="flex flex-col items-center">
-                <div className="text-base font-bold text-[#333]">2</div>
-                <div className="text-xs text-gray-600">优惠券</div>
+              <div className="flex flex-col items-center cursor-pointer">
+                <BsCurrencyDollar className="text-2xl text-black mb-1" />
+                <span className="text-xs text-black">待付款</span>
               </div>
-              <div className="flex flex-col items-center">
-                <div className="text-base font-bold text-[#333]">赚京豆</div>
-                <div className="text-xs text-gray-600">京豆</div>
+              <div className="flex flex-col items-center cursor-pointer">
+                <BsBoxSeam className="text-2xl text-black mb-1" />
+                <span className="text-xs text-black">待收货</span>
               </div>
-              <div className="flex flex-col items-center">
-                <div className="text-base font-bold text-[#333]">¥3</div>
-                <div className="text-xs text-gray-600">红包</div>
+              <div className="flex flex-col items-center cursor-pointer">
+                <LiaCommentDots className="text-2xl text-black mb-1" />
+                <span className="text-xs text-black">待评价</span>
               </div>
-              <div className="flex flex-col items-center">
-                <div className="text-base font-bold text-[#333]">购卡返</div>
-                <div className="text-xs text-gray-600">京东E卡</div>
+              <div className="flex flex-col items-center cursor-pointer">
+                <FiChevronLeft className="text-2xl text-black mb-1" />
+                <span className="text-xs text-black">退换售后</span>
+              </div>
+            </div>
+
+            {/* Order info banner */}
+            <div className="bg-white rounded-lg mb-3 flex p-1 items-center gap-2">
+              <div className="relative w-12 h-12">
+                <img
+                  src={"https://img12.360buyimg.com/imagetools/jfs/t1/262223/36/6054/12015/6773bcd6F6c1bad95/4528c0940e075e9f.png"}
+                  alt="avatar"
+                  className="w-12 h-12 round-md"
+                />
+                <div
+                  className="absolute inset-0 rounded-md pointer-events-none"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, rgba(0,0,0,0.06) 60%, rgba(0,0,0,0.11) 100%)"
+                  }}
+                />
+              </div>
+              <div>
+                <div className="text-xs text-gray-900 mb-1">暂无订单信息</div>
+                <div className="text-xs text-gray-500">下单后查看更多订单信息</div>
+              </div>
+            </div>
+
+            {/* Quick navigation */}
+            <div className="grid grid-cols-3 gap-2">
+              <div className="flex items-center cursor-pointer gap-1">
+                <FiClock className="text-sm text-black" />
+                <span className="text-xs text-black">浏览记录</span>
+              </div>
+              <div className="flex items-center cursor-pointer gap-1">
+                <FiStar className="text-sm text-black" />
+                <span className="text-xs text-black">商品收藏</span>
+              </div>
+              <div className="flex items-center cursor-pointer gap-1">
+                <LiaStoreSolid className="text-sm text-black" />
+                <span className="text-xs text-black">店铺关注</span>
               </div>
             </div>
           </div>
 
-          {/* Order status icons */}
-          <div className="grid grid-cols-4 gap-2 mb-3">
-            <div className="flex flex-col items-center cursor-pointer">
-              <BsCurrencyDollar className="text-2xl text-gray-600 mb-1" />
-              <span className="text-xs text-gray-700">待付款</span>
+          {/* Service grid with images - horizontally scrollable with 2 rows */}
+          <div className="flex-1 bg-[#F7F8FC] rounded-lg p-2 relative overflow-hidden">
+            <style>
+              {`
+                .service-scroll::-webkit-scrollbar {
+                  display: none;
+                }
+              `}
+            </style>
+            <div
+              className="service-scroll overflow-x-auto overflow-y-hidden"
+              style={{
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+                WebkitOverflowScrolling: "touch",
+              }}
+            >
+              <div className="flex flex-col gap-2" style={{ width: "max-content" }}>
+                {/* Top row */}
+                <div className="flex gap-2">
+                  {[
+                    { img: "https://m.360buyimg.com/babel/jfs/t20280623/309812/17/12177/10541/685a05d3F8f751f61/74fcb66e5f7314a9.png", text: "游戏" },
+                    { img: "https://m.360buyimg.com/babel/jfs/t20280630/318752/39/12617/3183/68635156F940430d8/c2c506471b0c308e.png", text: "企业计划购" },
+                    { img: "https://m.360buyimg.com/babel/jfs/t20280622/306853/15/11818/10773/6858fa4fF21d6b9d9/ef257d4775808b7c.png", text: "天天领好礼" },
+                    { img: "https://m.360buyimg.com/babel/jfs/t20280707/314563/6/15331/5518/686d06e8Ff1f6536a/0f615146c09b3f5b.png", text: "护士上门" },
+                    { img: "https://m.360buyimg.com/babel/jfs/t20280623/319397/28/11290/14419/685a0a07F8e0e8868/166bc0591f18780c.png", text: "云建" },
+                    { img: "https://m.360buyimg.com/babel/jfs/t20280626/318565/18/12242/6839/685e38acF7a5f395f/98bca322581d0798.png", text: "京东快递" },
+                  ].map((item, idx) => (
+                    <div key={idx} className="flex flex-col items-center cursor-pointer" style={{ minWidth: "56px", flexShrink: 0 }}>
+                      <img src={item.img} alt={item.text} className="w-7 h-7" />
+                      <span className="text-[12px] text-gray-700 whitespace-nowrap">{item.text}</span>
+                    </div>
+                  ))}
+                </div>
+                {/* Bottom row */}
+                <div className="flex gap-2">
+                  {[
+                    { img: "https://m.360buyimg.com/babel/jfs/t20280623/315746/28/11941/25614/685a6eddF5e1bcee4/1a93321a6c245165.png", text: "礼品卡" },
+                    { img: "https://img10.360buyimg.com/img/jfs/t1/346074/6/4118/8195/68c92b91F1dc4cd05/32f8deaab0e08085.png.avif", text: "家庭常备药" },
+                    { img: "https://m.360buyimg.com/babel/jfs/t20280623/304326/34/12989/27999/685a4d11F412da1e1/2d66d240702c5d30.png", text: "京东联名卡" },
+                    { img: "https://m.360buyimg.com/babel/jfs/t20280626/318565/18/12242/6839/685e38acF7a5f395f/98bca322581d0798.png", text: "京东快递" },
+                    { img: "https://m.360buyimg.com/babel/jfs/t20280623/319397/28/11290/14419/685a0a07F8e0e8868/166bc0591f18780c.png", text: "加油" },
+                  ].map((item, idx) => (
+                    <div key={idx} className="flex flex-col items-center cursor-pointer" style={{ minWidth: "56px", flexShrink: 0 }}>
+                      <img src={item.img} alt={item.text} className="w-7 h-7" />
+                      <span className="text-[12px] text-gray-700 whitespace-nowrap">{item.text}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-            <div className="flex flex-col items-center cursor-pointer">
-              <BsBoxSeam className="text-2xl text-gray-600 mb-1" />
-              <span className="text-xs text-gray-700">待收货</span>
-            </div>
-            <div className="flex flex-col items-center cursor-pointer">
-              <LiaCommentDots className="text-2xl text-gray-600 mb-1" />
-              <span className="text-xs text-gray-700">待评价</span>
-            </div>
-            <div className="flex flex-col items-center cursor-pointer">
-              <FiChevronLeft className="text-2xl text-gray-600 mb-1" />
-              <span className="text-xs text-gray-700">退换售后</span>
-            </div>
-          </div>
-
-          {/* Order info banner */}
-          <div className="bg-white rounded-lg p-3 mb-3 flex items-center gap-2">
-            <img src={"https://img10.360buyimg.com/img/jfs/t1/346074/6/4118/8195/68c92b91F1dc4cd05/32f8deaab0e08085.png.avif"} alt="avatar" className="w-6 h-6 rounded-full" />
-            <div>
-              <div className="text-xs text-gray-900">暂无订单信息</div>
-              <div className="text-xs text-gray-500">下单后查看更多订单信息</div>
-            </div>
-          </div>
-
-          {/* Quick navigation */}
-          <div className="grid grid-cols-3 gap-2 mb-3">
-            <div className="flex flex-col items-center cursor-pointer">
-              <FiClock className="text-xl text-gray-600 mb-1" />
-              <span className="text-xs text-gray-700">浏览记录</span>
-            </div>
-            <div className="flex flex-col items-center cursor-pointer">
-              <FiStar className="text-xl text-gray-600 mb-1" />
-              <span className="text-xs text-gray-700">商品收藏</span>
-            </div>
-            <div className="flex flex-col items-center cursor-pointer">
-              <LiaStoreSolid className="text-xl text-gray-600 mb-1" />
-              <span className="text-xs text-gray-700">店铺关注</span>
-            </div>
-          </div>
-
-          {/* Service grid with images */}
-          <div className="grid grid-cols-4 gap-2">
-            <div className="flex flex-col items-center cursor-pointer">
-              <img src="https://m.360buyimg.com/babel/jfs/t20280707/314563/6/15331/5518/686d06e8Ff1f6536a/0f615146c09b3f5b.png" alt="护士上门" className="w-8 h-8 mb-1" />
-              <span className="text-xs text-gray-700">护士上门</span>
-            </div>
-            <div className="flex flex-col items-center cursor-pointer">
-              <img src="https://m.360buyimg.com/babel/jfs/t20280630/318752/39/12617/3183/68635156F940430d8/c2c506471b0c308e.png" alt="企业计划购" className="w-8 h-8 mb-1" />
-              <span className="text-xs text-gray-700">企业计划购</span>
-            </div>
-            <div className="flex flex-col items-center cursor-pointer">
-              <img src="https://m.360buyimg.com/babel/jfs/t20280622/306853/15/11818/10773/6858fa4fF21d6b9d9/ef257d4775808b7c.png" alt="天天领好礼" className="w-8 h-8 mb-1" />
-              <span className="text-xs text-gray-700">天天领好礼</span>
-            </div>
-            <div className="flex flex-col items-center cursor-pointer">
-              <img src="https://m.360buyimg.com/babel/jfs/t20280623/319397/28/11290/14419/685a0a07F8e0e8868/166bc0591f18780c.png" alt="云建" className="w-8 h-8 mb-1" />
-              <span className="text-xs text-gray-700">云建</span>
-            </div>
-            <div className="flex flex-col items-center cursor-pointer">
-              <img src="https://m.360buyimg.com/babel/jfs/t20280626/318565/18/12242/6839/685e38acF7a5f395f/98bca322581d0798.png" alt="京东快递" className="w-8 h-8 mb-1" />
-              <span className="text-xs text-gray-700">京东快递</span>
-            </div>
-            <div className="flex flex-col items-center cursor-pointer">
-              <img src="https://m.360buyimg.com/babel/jfs/t20280623/304326/34/12989/27999/685a4d11F412da1e1/2d66d240702c5d30.png" alt="京东联名卡" className="w-8 h-8 mb-1" />
-              <span className="text-xs text-gray-700">京东联名卡</span>
-            </div>
-            <div className="flex flex-col items-center cursor-pointer">
-              <img src="https://m.360buyimg.com/babel/jfs/t20280623/309812/17/12177/10541/685a05d3F8f751f61/74fcb66e5f7314a9.png" alt="游戏" className="w-8 h-8 mb-1" />
-              <span className="text-xs text-gray-700">游戏</span>
-            </div>
-            <div className="flex flex-col items-center cursor-pointer">
-              <img src="https://m.360buyimg.com/babel/jfs/t20280623/315746/28/11941/25614/685a6eddF5e1bcee4/1a93321a6c245165.png" alt="礼品" className="w-8 h-8 mb-1" />
-              <span className="text-xs text-gray-700">礼品</span>
+            {/* Scroll indicator arrow */}
+            <div
+              className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none z-10 cursor-pointer"
+              style={{
+                background: "rgba(240, 240, 240, 0.8)",
+                borderRadius: "50%",
+                width: "24px",
+                height: "24px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <FiChevronRight size={16} className="text-gray-500 cursor-pointer" />
             </div>
           </div>
         </div>

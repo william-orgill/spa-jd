@@ -1,5 +1,18 @@
-import { useAppState } from "../state/appState";
 import { FiPlus } from "react-icons/fi";
+import { useAppContext } from "../context/AppProvider";
+
+/**
+ * ProductListing component
+ * 
+ * Accepts onProductClick?: (productIndex: number) => void 
+ * as a prop, which will be called when a product tile is clicked.
+ * 
+ * This enables JDApp.tsx to handle navigation and selectedProductId state.
+ */
+
+type ProductListingProps = {
+  onProductClick?: (productId: string) => void; // Changed from index to productId
+};
 
 // Filter bar categories with images
 const filterCategories = [
@@ -59,6 +72,7 @@ const filterCategories = [
 
 // Product data, copy the text and price from image
 const mockProduct = {
+  id: "1",
   name: "正压式长管空气呼吸器防吸毒毒防全面罩井下可通话带通讯作业面具 通...",
   price: "¥3629.00",
 };
@@ -67,19 +81,19 @@ const mockProduct = {
 const totalProducts = 9 * 6;
 const products = Array(totalProducts).fill(mockProduct);
 
-export default function ProductListing() {
-  const [state, setState] = useAppState();
+export default function ProductListing({ onProductClick }: ProductListingProps) {
+  const { addToCart } = useAppContext();
 
-  // Handler to go to product detail page
-  const goToProductPage = (index: number) => {
-    setState((prev) => ({
-      ...prev,
-      page: "product",
-      // You might want to use some real product id in real case
-      selectedProductId: `product-${index}`,
-    }));
+  const handleProductClick = (productId: string) => {
+    if (onProductClick) {
+      onProductClick(productId);
+    }
   };
 
+  const handleAddToCart = (e: React.MouseEvent, productId: string) => {
+    e.stopPropagation(); // Prevent triggering product click
+    addToCart(productId, 1);
+  };
   return (
     <div className="max-w-[1600px] mx-auto mt-2 relative z-10">
       <div className="bg-white rounded-xl p-4">
@@ -136,13 +150,13 @@ export default function ProductListing() {
         `}</style>
         <div className="grid grid-cols-6 gap-4">
           {products.map((product, index) => (
-            <button
+            <div
               key={index}
               className="jd-product-tile bg-white rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer flex flex-col"
               style={{
                 height: "378px",
               }}
-              onClick={() => goToProductPage(index)}
+              onClick={() => handleProductClick(product.id)}
             >
               {/* Image area - leaving space for image */}
               <div
@@ -189,14 +203,16 @@ export default function ProductListing() {
                       .00
                     </span>
                   </div>
-                  <span
-                    className="flex items-center justify-center rounded-full bg-[#f8f8f8] hover:bg-[#f1eef1] transition w-8 h-8 ml-2 border border-[#f2f2f2]"
+                  <button
+                    type="button"
+                    onClick={(e) => handleAddToCart(e, product.id)}
+                    className="flex items-center justify-center rounded-full bg-[#f8f8f8] hover:bg-[#f1eef1] transition w-8 h-8 ml-2 border border-[#f2f2f2] cursor-pointer"
                   >
                     <FiPlus className="text-[#e1251b] text-xl" />
-                  </span>
+                  </button>
                 </div>
               </div>
-            </button>
+            </div>
           ))}
         </div>
       </div>

@@ -1,8 +1,9 @@
 import logo from "../assets/logo.png";
-import { useAppState } from "../state/appState";
+import { useAppContext } from "../context/AppProvider";
 import { useState } from "react";
 import { FiChevronDown, FiCamera } from "react-icons/fi";
 import aiIcon from "../icons/ai.png";
+import surprise from "../assets/surprise.png";
 
 const navTexts = [
   "京东品酒会",
@@ -23,42 +24,50 @@ const boxData = [
   {
     img: "https://m.360buyimg.com/babel/jfs/t20261109/180861/1/40248/26542/654d9954F7e5217ad/fa9860886b3c867c.png",
     label: "低至5折",
+    id: "box-1",
   },
   {
     img: "https://m.360buyimg.com/babel/jfs/t1/314998/14/10321/23294/68510b49F87424655/a6b42db222177cfc.jpg",
     label: "直降15%起",
+    id: "box-2",
   },
   {
     img: "https://m.360buyimg.com/babel/jfs/t1/333728/8/12077/209618/68c38736F9187a71d/668ac39cc64db221.jpg",
     label: "低至5折",
+    id: "box-3",
   },
   {
     img: "https://m.360buyimg.com/babel/jfs/t1/296213/1/4589/38581/681c4b33F720154cf/03a194bc1d3c17a0.jpg",
     label: "球迷惊喜日",
     isCenter: true,
     sub: "官方旗舰店任性购",
+    id: "box-4",
   },
   {
     img: "https://m.360buyimg.com/babel/jfs/t1/197537/24/9808/185592/614c5d96E861c4e54/74d944f65a927cee.jpg",
     label: "企业专享价",
+    id: "box-5",
   },
   {
     img: "https://m.360buyimg.com/babel/jfs/t1/164957/4/46983/111616/670c8cfbFb108f33a/c6f0751fd8dbb9bc.jpg",
     label: "不止5折",
+    id: "box-6",
   },
   {
     img: "https://m.360buyimg.com/babel/jfs/t1/114431/9/48017/34832/674171bbFdb6e009b/0d01bcb502348034.jpg",
     label: "抢小美盒",
+    id: "box-7",
   },
 ];
 
 export default function HeaderSearch() {
-  const [state, setState] = useAppState();
+  const { setSearchQuery, setPage } = useAppContext();
   const [input, setInput] = useState("");
 
   const onSubmitSearch = () => {
     const q = input.trim();
-    setState((p) => ({ ...p, searchQuery: q, page: "search" }));
+    setSearchQuery(q);
+    setPage("search");
   };
 
   return (
@@ -77,9 +86,9 @@ export default function HeaderSearch() {
         >
           {/* Absolutely positioned Logo to the left, vertically centered */}
           <button
-            className="absolute -left-70 top-1/2 -translate-y-1/2 flex items-center px-0 sm:px-2 z-10"
+            className="absolute -left-70 top-1/2 -translate-y-1/2 flex items-center px-0 sm:px-2 z-10 cursor-pointer"
             style={{ height: 52 }}
-            onClick={() => setState((p) => ({ ...p, page: "home" }))}
+            onClick={() => setPage("home")}
             tabIndex={0}
           >
             <img src={logo} alt="京东" className="h-17 w-auto" style={{ objectFit: "contain" }} />
@@ -185,7 +194,7 @@ export default function HeaderSearch() {
           <div className="flex gap-3">
             {boxData.slice(0, 3).map((box, idx) => (
               <div
-                key={box.label}
+                key={box.id || `box-${idx}`}
                 className="relative bg-white rounded-lg h-25 w-25 min-w-0 border border-[#d6d7dc] shadow-sm flex flex-col overflow-hidden items-center justify-between"
               >
                 <div className="flex-1 flex items-end justify-center pb-[38px]">
@@ -203,31 +212,30 @@ export default function HeaderSearch() {
               </div>
             ))}
           </div>
-          {/* Center large box */}
-          <div className="relative bg-white rounded-lg h-25 w-85 min-w-0 border border-[#d6d7dc] shadow-sm flex flex-col items-center justify-center overflow-hidden">
-            <div className="flex flex-col items-center justify-center w-full h-full">
+          {/* Center large box with two images: left 1/3 is boxData[3], right 2/3 is surprise */}
+          <div className="relative bg-[#fff3f4] rounded-lg h-25 w-85 min-w-0 border border-[#d6d7dc] shadow-sm flex flex-row items-stretch justify-center overflow-hidden">
+            {/* Left: boxData[3] image and labels */}
+            <div className="flex w-1/3 h-full">
               <img
                 src={boxData[3].img}
                 alt={boxData[3].label}
-                className="object-contain max-h-[64px] mt-2"
-                style={{ maxWidth: '80%' }}
+                className="object-contain h-full"
               />
-              <div className="mt-2 mb-1">
-                <div className="bg-[#eb1324] text-white text-sm font-extrabold rounded-[4px] px-4 py-1 text-center shadow-sm tracking-wider whitespace-nowrap"
-                >
-                  {boxData[3].label}
-                </div>
-                <div className="text-[#eb1324] text-xs font-bold tracking-wide text-center mt-1">
-                  {boxData[3].sub}
-                </div>
-              </div>
+            </div>
+            {/* Right: surprise image fills 2/3 */}
+            <div className="flex items-center justify-center w-2/3 h-full">
+              <img
+                src={surprise}
+                alt="Surprise"
+                className="object-contain h-full w-full"
+              />
             </div>
           </div>
           {/* Right 3 boxes */}
           <div className="flex gap-3">
             {boxData.slice(4).map((box, idx) => (
               <div
-                key={box.label}
+                key={box.id || `box-${idx + 4}`}
                 className="relative bg-white rounded-lg h-25 w-25 min-w-0 border border-[#d6d7dc] shadow-sm flex flex-col overflow-hidden items-center justify-between"
               >
                 <div className="flex-1 flex items-end justify-center pb-[38px]">

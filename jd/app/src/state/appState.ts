@@ -16,6 +16,7 @@ export type AppState = {
   searchQuery: string;
   selectedProductId: string | null;
   cart: CartItem[];
+  showCartDropdown: boolean;
 };
 
 export const initialState: AppState = {
@@ -23,6 +24,7 @@ export const initialState: AppState = {
   searchQuery: "",
   selectedProductId: null,
   cart: [],
+  showCartDropdown: false,
 };
 
 export function useAppState() {
