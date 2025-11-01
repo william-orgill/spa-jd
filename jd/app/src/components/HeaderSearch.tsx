@@ -18,6 +18,40 @@ const navTexts = [
   "电动车挡风被加厚",
 ];
 
+// 7 boxes' content/labels and images:
+const boxData = [
+  {
+    img: "https://m.360buyimg.com/babel/jfs/t20261109/180861/1/40248/26542/654d9954F7e5217ad/fa9860886b3c867c.png",
+    label: "低至5折",
+  },
+  {
+    img: "https://m.360buyimg.com/babel/jfs/t1/314998/14/10321/23294/68510b49F87424655/a6b42db222177cfc.jpg",
+    label: "直降15%起",
+  },
+  {
+    img: "https://m.360buyimg.com/babel/jfs/t1/333728/8/12077/209618/68c38736F9187a71d/668ac39cc64db221.jpg",
+    label: "低至5折",
+  },
+  {
+    img: "https://m.360buyimg.com/babel/jfs/t1/296213/1/4589/38581/681c4b33F720154cf/03a194bc1d3c17a0.jpg",
+    label: "球迷惊喜日",
+    isCenter: true,
+    sub: "官方旗舰店任性购",
+  },
+  {
+    img: "https://m.360buyimg.com/babel/jfs/t1/197537/24/9808/185592/614c5d96E861c4e54/74d944f65a927cee.jpg",
+    label: "企业专享价",
+  },
+  {
+    img: "https://m.360buyimg.com/babel/jfs/t1/164957/4/46983/111616/670c8cfbFb108f33a/c6f0751fd8dbb9bc.jpg",
+    label: "不止5折",
+  },
+  {
+    img: "https://m.360buyimg.com/babel/jfs/t1/114431/9/48017/34832/674171bbFdb6e009b/0d01bcb502348034.jpg",
+    label: "抢小美盒",
+  },
+];
+
 export default function HeaderSearch() {
   const [state, setState] = useAppState();
   const [input, setInput] = useState("");
@@ -53,9 +87,7 @@ export default function HeaderSearch() {
           </button>
 
           {/* Content wrapper, enough left padding for logo */}
-          <div
-            className="w-full flex flex-col items-center"
-          >
+          <div className="w-full flex flex-col items-center">
             {/* Responsive search + AI row */}
             <div className="flex w-full items-center">
               {/* Search bar: responsive max/min width, centered */}
@@ -151,62 +183,67 @@ export default function HeaderSearch() {
         <div className="flex items-center gap-3">
           {/* Left 3 boxes */}
           <div className="flex gap-3">
-            {/* Each small card NOW COPYING THE SECOND ONE */}
-            <div className="relative bg-white rounded-lg h-25 w-25 min-w-0 border border-[#d6d7dc] shadow-sm flex flex-col overflow-hidden">
-              <div className="flex-1" />
-              <div className="absolute -left-1 bottom-0 w-27 flex justify-center ">
-                <div className="bg-[#eb1324] text-white text-xs font-bold rounded-[4px] py-1 mb-1 w-[86%] text-center shadow-sm tracking-wider">
-                  热卖尖货
+            {boxData.slice(0, 3).map((box, idx) => (
+              <div
+                key={box.label}
+                className="relative bg-white rounded-lg h-25 w-25 min-w-0 border border-[#d6d7dc] shadow-sm flex flex-col overflow-hidden items-center justify-between"
+              >
+                <div className="flex-1 flex items-end justify-center pb-[38px]">
+                  <img
+                    src={box.img}
+                    alt={box.label}
+                    className="max-h-[100px] max-w-[90%] object-contain"
+                  />
+                </div>
+                <div className="absolute -left-1 bottom-0 w-27 flex justify-center ">
+                  <div className="bg-[#eb1324] text-white text-xs font-bold rounded-[4px] py-1 mb-1 w-[86%] text-center shadow-sm tracking-wider whitespace-nowrap">
+                    {box.label}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="relative bg-white rounded-lg h-25 w-25 min-w-0 border border-[#d6d7dc] shadow-sm flex flex-col overflow-hidden">
-              <div className="flex-1" />
-              <div className="absolute -left-1 bottom-0 w-27 flex justify-center ">
-                <div className="bg-[#eb1324] text-white text-xs font-bold rounded-[4px] py-1 mb-1 w-[86%] text-center shadow-sm tracking-wider">
-                  买自营省无忧
-                </div>
-              </div>
-            </div>
-            <div className="relative bg-white rounded-lg h-25 w-25 min-w-0 border border-[#d6d7dc] shadow-sm flex flex-col overflow-hidden">
-              <div className="flex-1" />
-              <div className="absolute -left-1 bottom-0 w-27 flex justify-center ">
-                <div className="bg-[#eb1324] text-white text-xs font-bold rounded-[4px] py-1 mb-1 w-[86%] text-center shadow-sm tracking-wider">
-                  抢神券24.5%
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
           {/* Center large box */}
-          <div className="relative bg-white rounded-lg h-25 w-85 min-w-0 border border-[#d6d7dc] shadow-sm flex items-center justify-center overflow-hidden">
-            {/* No content, just blank (could insert promo banner if wanted) */}
+          <div className="relative bg-white rounded-lg h-25 w-85 min-w-0 border border-[#d6d7dc] shadow-sm flex flex-col items-center justify-center overflow-hidden">
+            <div className="flex flex-col items-center justify-center w-full h-full">
+              <img
+                src={boxData[3].img}
+                alt={boxData[3].label}
+                className="object-contain max-h-[64px] mt-2"
+                style={{ maxWidth: '80%' }}
+              />
+              <div className="mt-2 mb-1">
+                <div className="bg-[#eb1324] text-white text-sm font-extrabold rounded-[4px] px-4 py-1 text-center shadow-sm tracking-wider whitespace-nowrap"
+                >
+                  {boxData[3].label}
+                </div>
+                <div className="text-[#eb1324] text-xs font-bold tracking-wide text-center mt-1">
+                  {boxData[3].sub}
+                </div>
+              </div>
+            </div>
           </div>
           {/* Right 3 boxes */}
           <div className="flex gap-3">
-            <div className="relative bg-white rounded-lg h-25 w-25 min-w-0 border border-[#d6d7dc] shadow-sm flex flex-col overflow-hidden">
-              <div className="flex-1" />
-              <div className="absolute -left-1 bottom-0 w-27 flex justify-center ">
-                <div className="bg-[#eb1324] text-white text-xs font-bold rounded-[4px] py-1 mb-1 w-[86%] text-center shadow-sm tracking-wider">
-                  热搜爆品210
+            {boxData.slice(4).map((box, idx) => (
+              <div
+                key={box.label}
+                className="relative bg-white rounded-lg h-25 w-25 min-w-0 border border-[#d6d7dc] shadow-sm flex flex-col overflow-hidden items-center justify-between"
+              >
+                <div className="flex-1 flex items-end justify-center pb-[38px]">
+                  <img
+                    src={box.img}
+                    alt={box.label}
+                    className="max-h-[100px] max-w-[90%] object-contain"
+                  />
+                </div>
+                <div className="absolute -left-1 bottom-0 w-27 flex justify-center ">
+                  <div className="bg-[#eb1324] text-white text-xs font-bold rounded-[4px] py-1 mb-1 w-[86%] text-center shadow-sm tracking-wider whitespace-nowrap">
+                    {box.label}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="relative bg-white rounded-lg h-25 w-25 min-w-0 border border-[#d6d7dc] shadow-sm flex flex-col overflow-hidden">
-              <div className="flex-1" />
-              <div className="absolute -left-1 bottom-0 w-27 flex justify-center ">
-                <div className="bg-[#eb1324] text-white text-xs font-bold rounded-[4px] py-1 mb-1 w-[86%] text-center shadow-sm tracking-wider">
-                  明星热抢榜
-                </div>
-              </div>
-            </div>
-            <div className="relative bg-white rounded-lg h-25 w-25 min-w-0 border border-[#d6d7dc] shadow-sm flex flex-col overflow-hidden">
-              <div className="flex-1" />
-              <div className="absolute -left-1 bottom-0 w-27 flex justify-center ">
-                <div className="bg-[#eb1324] text-white text-xs font-bold rounded-[4px] py-1 mb-1 w-[86%] text-center shadow-sm tracking-wider">
-                  家一站购
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>

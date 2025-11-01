@@ -70,6 +70,16 @@ const products = Array(totalProducts).fill(mockProduct);
 export default function ProductListing() {
   const [state, setState] = useAppState();
 
+  // Handler to go to product detail page
+  const goToProductPage = (index: number) => {
+    setState((prev) => ({
+      ...prev,
+      page: "product",
+      // You might want to use some real product id in real case
+      selectedProductId: `product-${index}`,
+    }));
+  };
+
   return (
     <div className="max-w-[1600px] mx-auto mt-2 relative z-10">
       <div className="bg-white rounded-xl p-4">
@@ -77,14 +87,14 @@ export default function ProductListing() {
         <div
           className="mb-4 pb-3 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-200"
           style={{
-            WebkitOverflowScrolling: "touch", // smooth scroll on mobile
+            WebkitOverflowScrolling: "touch",
           }}
         >
           <div
             className="flex items-center gap-4"
             style={{
-              flexWrap: "nowrap", // prevent wrapping
-              minWidth: `${filterCategories.length * 104}px`, // force single-row scroll if needed; each pill ~104px
+              flexWrap: "nowrap",
+              minWidth: `${filterCategories.length * 104}px`,
               width: "max-content"
             }}
           >
@@ -110,7 +120,6 @@ export default function ProductListing() {
         </div>
 
         {/* Product grid - 6 columns, 9 rows */}
-        {/* Style: ONLY a thin red border and shadow on hover, no transform/pop effect. */}
         <style>{`
           .jd-product-tile {
             border: 1px solid #fff;
@@ -122,7 +131,6 @@ export default function ProductListing() {
           .jd-product-tile:hover, .jd-product-tile:focus-visible {
             border-color: #e1251b;
             box-shadow: 0 1.5px 6px 0 rgba(225, 37, 27, .05), 0 0px 1.5px 0 #e1251b;
-            /* No transform/scale/pop here */
             z-index: 2;
           }
         `}</style>
@@ -134,27 +142,21 @@ export default function ProductListing() {
               style={{
                 height: "378px",
               }}
-              onClick={() =>
-                setState((prev) => ({
-                  ...prev,
-                  page: "product",
-                  selectedProductId: `product-${index}`,
-                }))
-              }
+              onClick={() => goToProductPage(index)}
             >
               {/* Image area - leaving space for image */}
               <div
                 className="w-full bg-gray-50 flex items-center justify-center"
-                style={{ height: "240px" }} // fits like image area above lower box in your screenshot
+                style={{ height: "240px" }}
               >
                 {/* Placeholder for image */}
               </div>
 
-              {/* Product info area - copy style from screenshot */}
+              {/* Product info area */}
               <div
                 className="flex-1 flex flex-col justify-between px-3 pt-2 pb-3"
               >
-                {/* Product name (lines, truncate with ellipsis) */}
+                {/* Product name */}
                 <div
                   className="text-[17px] font-normal text-black leading-snug break-words line-clamp-2"
                   style={{

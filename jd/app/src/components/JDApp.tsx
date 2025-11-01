@@ -6,6 +6,7 @@ import HeroBackground from "./HeroBackground";
 import HeaderSearch from "./HeaderSearch";
 import MainGrid from "./MainGrid";
 import ProductListing from "./ProductListing";
+import ProductDetail from "./ProductDetail";
 import Footer from "./Footer";
 import RightToolbar from "./RightToolbar";
 
@@ -108,30 +109,7 @@ export default function JDApp() {
     );
   })();
 
-  const productPage = selectedProduct && (
-    <div className="max-w-6xl mx-auto p-6 grid grid-cols-2 gap-8 relative z-10">
-      <img src={selectedProduct.image} alt={selectedProduct.title} className="w-full rounded shadow" />
-      <div>
-        <div className="text-gray-500 mb-2">{selectedProduct.category}</div>
-        <h1 className="text-2xl font-semibold mb-4">{selectedProduct.title}</h1>
-        <div className="text-3xl text-[#e1251b] font-bold mb-6">${selectedProduct.price}</div>
-        <div className="flex gap-3">
-          <button
-            className="px-6 py-3 bg-[#e1251b] text-white rounded cursor-pointer"
-            onClick={() => addToCart(selectedProduct.id)}
-          >
-            Add to Cart
-          </button>
-          <button
-            className="px-6 py-3 bg-gray-200 rounded cursor-pointer"
-            onClick={() => setState((p) => ({ ...p, page: "home" }))}
-          >
-            Back
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+  const productPage = <ProductDetail />;
 
   const cartPage = (
     <div className="max-w-4xl mx-auto p-6 relative z-10">
@@ -160,11 +138,15 @@ export default function JDApp() {
 
   return (
     <div className="min-h-screen bg-[#f7f7fb] relative">
-      <HeroBackground />
-      <Topbar />
-      <div className="relative z-10">
-        <HeaderSearch />
-      </div>
+      {state.page !== "product" && state.page !== "cart" && (
+        <>
+          <HeroBackground />
+          <Topbar />
+          <div className="relative z-10">
+            <HeaderSearch />
+          </div>
+        </>
+      )}
       {state.page === "home" && home}
       {state.page === "search" && (
         <div className="max-w-6xl mx-auto px-4">{searchResults}</div>
