@@ -221,11 +221,11 @@ export default function MainGrid() {
 
   return (
     <div
-      className="max-w-[1600px] mx-auto mt-1 relative z-10"
-      style={{ height: 432 }}
+      className="max-w-[1600px] mx-auto mt-1 relative"
+      style={{ height: 432, zIndex: 10 }}
     >
       <div
-        className="grid gap-2 bg-white p-4 rounded-xl h-full"
+        className="grid gap-1 bg-white p-4 rounded-xl h-full"
         style={{
           gridTemplateColumns: "248px minmax(0,1fr) 248px"
         }}
@@ -248,11 +248,11 @@ export default function MainGrid() {
         {/* Center white box */}
         <div className="px-0 py-0 flex flex-col h-60 justify-between">
           {/* Top bar for shortcuts */}
-          <div className="px-1 py-2 flex flex-wrap items-center gap-y-1 min-h-[48px] bg-[#F7F8FC] rounded-lg mb-4 mx-3">
+          <div className="px-1 py-2 flex flex-wrap items-center gap-y-1 min-h-[48px] bg-[#F7F8FC] rounded-lg mb-4 mx-3 gap-[19px] px-2">
             {centerShortcuts.map(({ label, img }) => (
               <span
                 key={label}
-                className="flex items-center gap-1 text-md font-bold text-[#585858] px-2 cursor-pointer rounded hover:bg-[#f5f5f5] transition"
+                className="flex items-center gap-1 text-md font-bold text-[#585858] cursor-pointer rounded hover:bg-[#f5f5f5] transition"
               >
                 <img src={img} alt={label} className="w-5 h-5 object-contain" />
                 {label}
@@ -346,7 +346,7 @@ export default function MainGrid() {
               </div>
               {/* Top right section */}
               <div
-                className="col-span-2 h-[160px] bg-[#F7F8FC] rounded-lg p-3 flex flex-col cursor-pointer"
+                className="col-span-2 h-[160px] bg-[#F7F8FC] rounded-lg px-3 py-2 flex flex-col cursor-pointer"
                 style={{
                   gridRow: "1",
                   gridColumn: "3 / span 2",
@@ -383,7 +383,7 @@ export default function MainGrid() {
               {bottomSections.map((section, i) => (
                 <div
                   key={i}
-                  className="bg-[#F7F8FC] rounded-lg p-3 h-[160px] flex flex-col cursor-pointer"
+                  className="bg-[#F7F8FC] rounded-lg px-3 py-2 h-[160px] flex flex-col cursor-pointer"
                   style={{
                     gridRow: "2",
                     gridColumn: `${i + 1}`,
@@ -400,12 +400,27 @@ export default function MainGrid() {
                     {section.type === "special" && section.leftBox && section.rightBox && (
                       <div className="grid grid-cols-2 gap-2 h-full">
                         {/* Left red box */}
-                        <div className="bg-[#e1251b] rounded p-2 flex flex-col justify-between">
-                          <div className="text-white text-xs font-bold">{section.leftBox.text}</div>
-                          <div className="space-y-1">
+                        <div className="bg-white rounded-lg flex flex-col">
+                          <div className="bg-[#e1251b] text-white text-[14px] rounded-t-lg text-center py-1">{section.leftBox.text}</div>
+                          <div className="space-y-1 px-2 py-1">
                             {section.leftBox.benefits.map((benefit, idx) => (
-                              <div key={idx} className="text-white text-xs flex items-center">
-                                <span className="mr-1">✓</span> {benefit}
+                              <div key={idx} className="text-black text-[14px] flex items-center justify-between">
+                                <span
+                                  className="mr-2 flex items-center justify-center rounded-full"
+                                  style={{
+                                    backgroundColor: "#ffe5ec",
+                                    width: 16,
+                                    height: 16,
+                                  }}
+                                >
+                                  <span
+                                    className="text-[#e1251b] text-[10px] font-bold"
+                                    style={{ lineHeight: 1 }}
+                                  >
+                                    ✓
+                                  </span>
+                                </span>
+                                <span className="flex-1 text-right">{benefit}</span>
                               </div>
                             ))}
                           </div>

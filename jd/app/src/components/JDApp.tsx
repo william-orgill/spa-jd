@@ -9,6 +9,7 @@ import ProductDetail from "./ProductDetail";
 import Footer from "./Footer";
 import RightToolbar from "./RightToolbar";
 import CartDropdown from "./CartDropdown";
+import { getProductById, getPriceAsNumber } from "../data/products";
 
 const sampleProducts: Product[] = [
   {
@@ -98,14 +99,6 @@ export default function JDApp() {
 
   const productPage = <ProductDetail />;
 
-  // Mock product for cart page (same as ProductListing)
-  const mockProductForCart = {
-    id: "1",
-    title: "正压式长管空气呼吸器防吸毒毒防全面罩井下可通话带通讯作业面具 通...",
-    price: 3629.00,
-    image: "",
-  };
-
   const cartPage = (
     <div className="max-w-4xl mx-auto p-6 relative z-10">
       <h2 className="text-xl font-semibold mb-4">购物车</h2>
@@ -113,24 +106,42 @@ export default function JDApp() {
         <div className="text-gray-500">您的购物车是空的</div>
       ) : (
         <div className="space-y-4">
-          {state.cart.map((it) => (
-            <div key={it.productId} className="flex items-center gap-4 bg-white p-3 rounded shadow">
-              <div className="w-20 h-20 bg-gray-100 rounded flex items-center justify-center flex-shrink-0">
-                <span className="text-xs text-gray-400">图片</span>
-              </div>
-              <div className="flex-1">
-                <div className="font-medium">{mockProductForCart.title}</div>
-                <div className="text-sm text-gray-500 mt-1">
-                  数量: {it.qty}
+          {state.cart.map((it) => {
+            const product = getProductById(it.productId);
+            if (!product) return null;
+
+            const price = getPriceAsNumber(product.currentPrice);
+            const mainImage = product.images?.[0] || "";
+
+            return (
+              <div key={it.productId} className="flex items-center gap-4 bg-white p-3 rounded shadow">
+                <div className="w-20 h-20 bg-gray-100 rounded flex-shrink-0 overflow-hidden">
+                  {mainImage ? (
+                    <img 
+                      src={mainImage} 
+                      alt={product.title}
+                      className="w-full h-full object-contain"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <span className="text-xs text-gray-400">图片</span>
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <div className="font-medium">{product.title}</div>
+                  <div className="text-sm text-gray-500 mt-1">
+                    数量: {it.qty}
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="text-[#e1251b] font-bold text-lg">
+                    ¥{(price * it.qty).toFixed(2)}
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="text-[#e1251b] font-bold text-lg">
-                  ¥{(mockProductForCart.price * it.qty).toFixed(2)}
-                </div>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
@@ -158,7 +169,7 @@ export default function JDApp() {
             onNavigateHome={handleNavigateHome}
           />
           {state.page !== "product" && (
-            <div className="relative z-10">
+            <div className="relative" style={{ zIndex: 100 }}>
               <HeaderSearch />
             </div>
           )}

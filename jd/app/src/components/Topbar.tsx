@@ -16,9 +16,9 @@ export default function Topbar({ isProductPage = false, onNavigateHome }: Topbar
   // Calculate cart count from reactive state
   const cartCount = state.cart.reduce((sum, item) => sum + item.qty, 0);
   return (
-    <div className="w-full bg-white text-xs text-gray-500 relative z-[9997]">
+    <div className="w-full bg-white text-gray-500 relative z-[9997]">
       <div
-        className="flex items-center justify-between h-9 text-[11px] text-color-base"
+        className="flex pt-2 justify-between h-9 text-[12px] text-color-base"
         style={{
           minWidth: 0,
           width: "100%",
@@ -28,12 +28,12 @@ export default function Topbar({ isProductPage = false, onNavigateHome }: Topbar
         }}
       >
         <div
-          className="flex items-center space-x-4"
+          className="flex space-x-4"
           style={{
             minWidth: 0,
             flexShrink: 0,
             whiteSpace: "nowrap",
-            marginLeft: "max(42px, calc((100vw - 1550px) / 2))",
+            marginLeft: "max(42px, calc((100vw - 1590px) / 2))",
           }}
         >
           {isProductPage ? (
@@ -41,7 +41,7 @@ export default function Topbar({ isProductPage = false, onNavigateHome }: Topbar
               {/* JD Logo */}
               <button
                 onClick={onNavigateHome}
-                className="flex items-center cursor-pointer gap-2 mr-2"
+                className="flex cursor-pointer gap-2 mr-2"
               >
                 <img 
                   src={"https://img12.360buyimg.com/img/jfs/t1/109080/21/58367/14698/675171baFb8b7a6d2/22ad515c81c73261.png"} 
@@ -53,47 +53,47 @@ export default function Topbar({ isProductPage = false, onNavigateHome }: Topbar
               {/* Home icon + text */}
               <button
                 onClick={onNavigateHome}
-                className={`flex items-center cursor-pointer gap-1 ${hoverClass}`}
+                className={`flex cursor-pointer gap-1 ${hoverClass}`}
               >
                 <FiHome size={14} className="text-gray-500" />
                 <span>京东首页</span>
               </button>
               {/* Region selector */}
-              <div className={`flex items-center cursor-pointer gap-1 ${hoverClass}`}>
+              <div className={`flex cursor-pointer gap-1 ${hoverClass}`}>
                 中国大陆版 - 海外
-                <FiChevronDown size={8} className="text-black" />
+                <FiChevronDown size={8} className="text-black mt-1" />
               </div>
             </>
           ) : (
             <>
-              <div className={`flex items-center cursor-pointer gap-1 ${hoverClass}`}>
+              <div className={`flex cursor-pointer gap-1 ${hoverClass}`}>
                 中国大陆版 - 海外
-                <FiChevronDown size={8} className="text-black" />
+                <FiChevronDown size={8} className="text-black mt-1" />
               </div>
             </>
           )}
           <span className={`cursor-pointer ${hoverClass}`}>你好，请登录</span>
-          <span className={`cursor-pointer text-red-500 ${hoverClass}`}>免费注册</span>
+          <span className={`cursor-pointer text-red-500 -ml-2 ${hoverClass}`}>免费注册</span>
           {!isProductPage && <span className={`cursor-pointer ${hoverClass}`}>切换至企业版</span>}
         </div>
         <div
-          className="flex items-center space-x-5"
+          className="flex space-x-6"
           style={{
             minWidth: 0,
             flexShrink: 0,
             whiteSpace: "nowrap",
-            marginRight: "max(42px, calc((100vw - 1550px) / 2))",
+            marginRight: "max(42px, calc((100vw - 1590px) / 2))",
           }}
         >
           <button
             type="button"
             onClick={toggleCartDropdown}
-            className={`cursor-pointer flex items-center gap-1 ${hoverClass} relative`}
+            className={`cursor-pointer flex gap-1 ${hoverClass} relative`}
           >
             <img
               src={cart}
               alt="购物车"
-              className="w-3 h-3 inline-block"
+              className="w-3 h-3 inline-block mt-[2px]"
               style={{
                 filter:
                   "brightness(0) saturate(100%) invert(16%) sepia(99%) saturate(4214%) hue-rotate(358deg) brightness(94%) contrast(118%)",
@@ -107,20 +107,20 @@ export default function Topbar({ isProductPage = false, onNavigateHome }: Topbar
             )}
           </button>
           <span className={`cursor-pointer ${hoverClass}`}>我的订单</span>
-          <span className={`cursor-pointer flex items-center gap-1 ${hoverClass}`}>
-            我的京东 <FiChevronDown size={8} className="text-black" />
+          <span className={`cursor-pointer flex gap-1 ${hoverClass}`}>
+            我的京东 <FiChevronDown size={9} className="text-black mt-1" />
           </span>
-          <span className={`cursor-pointer flex items-center gap-1 ${hoverClass}`}>
-            企业采购 <FiChevronDown size={8} className="text-black" />
+          <span className={`cursor-pointer flex gap-1 ${hoverClass}`}>
+            企业采购 <FiChevronDown size={9} className="text-black mt-1" />
           </span>
-          <span className={`cursor-pointer flex items-center gap-1 ${hoverClass}`}>
-            商家服务 <FiChevronDown size={8} className="text-black" />
+          <span className={`cursor-pointer flex gap-1 ${hoverClass}`}>
+            商家服务 <FiChevronDown size={9} className="text-black mt-1" />
           </span>
-          <span className={`cursor-pointer flex items-center gap-1 ${hoverClass}`}>
-            网站导航 <FiChevronDown size={8} className="text-black" />
+          <span className={`cursor-pointer flex gap-1 ${hoverClass}`}>
+            网站导航 <FiChevronDown size={9} className="text-black mt-1" />
           </span>
-          <span className={`cursor-pointer flex items-center gap-1 ${hoverClass}`}>
-            手机京东 <FiChevronDown size={8} className="text-black" />
+          <span className={`cursor-pointer flex gap-1 ${hoverClass}`}>
+            手机京东 <FiChevronDown size={9} className="text-black mt-1" />
           </span>
           <span className={`cursor-pointer ${hoverClass}`}>网站无障碍</span>
         </div>

@@ -1,17 +1,13 @@
 import { FiPlus } from "react-icons/fi";
-import { useAppContext } from "../context/AppProvider";
-
-/**
- * ProductListing component
- * 
- * Accepts onProductClick?: (productIndex: number) => void 
- * as a prop, which will be called when a product tile is clicked.
- * 
- * This enables JDApp.tsx to handle navigation and selectedProductId state.
- */
+import  { useAppContext } from "../context/AppProvider";
+import { productCatalog, getPriceAsNumber } from "../data/products";
+import ad1 from "../assets/ad1.png";
+import ad2 from "../assets/ad2.png";
+import ad3 from "../assets/ad3.png";
+import ad4 from "../assets/ad4.png";
 
 type ProductListingProps = {
-  onProductClick?: (productId: string) => void; // Changed from index to productId
+  onProductClick?: (productId: string) => void;
 };
 
 // Filter bar categories with images
@@ -70,19 +66,40 @@ const filterCategories = [
   },
 ];
 
-// Product data, copy the text and price from image
-const mockProduct = {
-  id: "1",
-  name: "正压式长管空气呼吸器防吸毒毒防全面罩井下可通话带通讯作业面具 通...",
-  price: "¥3629.00",
-};
+// Ad image URLs array (replace with your actual ad image URLs)
+const adImages = [
+  ad1, // AD 1
+  ad2, // AD 2
+  ad3, // AD 3
+  ad4, // AD 4
+];
 
-// Generate 9 rows × 6 columns = 54 products
-const totalProducts = 9 * 6;
-const products = Array(totalProducts).fill(mockProduct);
+// Generate 9 rows × 6 columns = 54 products by looping through the catalog
+const totalRows = 9;
+const totalCols = 6;
+const totalProducts = totalRows * totalCols;
+const products = Array.from({ length: totalProducts }, (_, idx) => {
+  return productCatalog[idx % productCatalog.length];
+});
+
+// Ad positions: (row 1,4,7,9) at first column (col 0): indexes 0, 18, 36, 48
+const adInsertIndexes = [0, 18, 36, 48];
+
+// Helper to randomly shuffle ads each render
+function shuffledAds() {
+  const arr = [...adImages];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
 
 export default function ProductListing({ onProductClick }: ProductListingProps) {
   const { addToCart } = useAppContext();
+
+  // Shuffle ads only once per render.
+  const ads = shuffledAds();
 
   const handleProductClick = (productId: string) => {
     if (onProductClick) {
@@ -91,45 +108,78 @@ export default function ProductListing({ onProductClick }: ProductListingProps) 
   };
 
   const handleAddToCart = (e: React.MouseEvent, productId: string) => {
-    e.stopPropagation(); // Prevent triggering product click
+    e.stopPropagation();
     addToCart(productId, 1);
   };
+
   return (
     <div className="max-w-[1600px] mx-auto mt-2 relative z-10">
       <div className="bg-white rounded-xl p-4">
-        {/* Filter bar */}
-        <div
-          className="mb-4 pb-3 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-200"
-          style={{
-            WebkitOverflowScrolling: "touch",
-          }}
-        >
+        {/* Filter bar with right arrow */}
+        <div className="mb-4 relative">
+          {/* Hide the scroll bar for all browsers and make the arrow perfectly middle right */}
           <div
-            className="flex items-center gap-4"
+            className="overflow-x-auto"
             style={{
-              flexWrap: "nowrap",
-              minWidth: `${filterCategories.length * 104}px`,
-              width: "max-content"
+              WebkitOverflowScrolling: "touch",
+              scrollbarWidth: "none", // Firefox
+              msOverflowStyle: "none", // IE and Edge
             }}
           >
-            {filterCategories.map((category, idx) => (
-              <div
-                key={category.label}
-                className={
-                  "flex items-center rounded-md px-3 py-1.5 text-sm cursor-pointer transition-colors whitespace-nowrap " +
-                  (idx === 0
-                    ? "bg-[#fef0ef] text-[#e1251b] font-semibold"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200")
+            <div
+              // Hide scrollbar in Webkit browsers
+              style={{
+                flexWrap: "nowrap",
+                minWidth: `${filterCategories.length * 104}px`,
+                width: "max-content",
+                // Hide scrollbar in Chrome, Safari and Opera
+                WebkitOverflowScrolling: "touch",
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+              }}
+              className="flex items-center gap-4"
+            >
+              {/* Hide the scroll bar for all browsers */}
+              <style>{`
+                div[role='presentation']::-webkit-scrollbar,
+                .overflow-x-auto::-webkit-scrollbar {
+                  display: none;
+                  height: 0 !important;
+                  background: transparent !important;
                 }
-              >
-                <img
-                  src={category.img}
-                  alt={category.label}
-                  className="w-6 h-6 object-contain mr-2"
-                />
-                <span>{category.label}</span>
-              </div>
-            ))}
+              `}</style>
+              {filterCategories.map((category, idx) => (
+                <div
+                  key={category.label}
+                  className={
+                    "flex items-center rounded-md px-3 py-1.5 text-sm cursor-pointer transition-colors whitespace-nowrap " +
+                    (idx === 0
+                      ? "bg-[#fef0ef] text-[#e1251b] font-semibold"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200")
+                  }
+                >
+                  <img
+                    src={category.img}
+                    alt={category.label}
+                    className="w-6 h-6 object-contain mr-2"
+                  />
+                  <span>{category.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* Arrow right overlay - perfectly centered vertically */}
+          <div
+            className="absolute right-0 top-1/2 -translate-y-2/3 flex items-center h-9 w-9 bg-gradient-to-l from-white via-white/60 to-white/10 rounded-md shadow border border-gray-200 z-10 cursor-pointer justify-center"
+            style={{
+              boxShadow: "0px 2px 12px 0 rgba(31, 56, 88, 0.08)", 
+              pointerEvents: "none", // decorative only, not clickable
+            }}
+          >
+            <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <rect width="24" height="24" fill="none" />
+              <path d="M9.5 17a1 1 0 0 1-.7-1.71l4.22-4.29a1 1 0 0 0 0-1.42l-4.22-4.29A1 1 0 1 1 10.92 4.7l4.23 4.3a3 3 0 0 1 0 4.24l-4.23 4.3a1 1 0 0 1-.7.29z" fill="#b7bac3"/>
+            </svg>
           </div>
         </div>
 
@@ -147,73 +197,124 @@ export default function ProductListing({ onProductClick }: ProductListingProps) 
             box-shadow: 0 1.5px 6px 0 rgba(225, 37, 27, .05), 0 0px 1.5px 0 #e1251b;
             z-index: 2;
           }
+          .jd-ad-tile:hover {
+            border-color: #e1251b;
+            box-shadow: 0 1.5px 6px 0 rgba(225, 37, 27, .05);
+            z-index: 2;
+          }
         `}</style>
         <div className="grid grid-cols-6 gap-4">
-          {products.map((product, index) => (
-            <div
-              key={index}
-              className="jd-product-tile bg-white rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer flex flex-col"
-              style={{
-                height: "378px",
-              }}
-              onClick={() => handleProductClick(product.id)}
-            >
-              {/* Image area - leaving space for image */}
-              <div
-                className="w-full bg-gray-50 flex items-center justify-center"
-                style={{ height: "240px" }}
-              >
-                {/* Placeholder for image */}
-              </div>
-
-              {/* Product info area */}
-              <div
-                className="flex-1 flex flex-col justify-between px-3 pt-2 pb-3"
-              >
-                {/* Product name */}
+          {Array.from({ length: totalProducts }).map((_, index) => {
+            // If this should be an ad:
+            const adPos = adInsertIndexes.indexOf(index);
+            if (adPos !== -1) {
+              // Show ad tile - FULL SIZE
+              return (
                 <div
-                  className="text-[17px] font-normal text-black leading-snug break-words line-clamp-2"
+                  key={`ad-tile-${adPos}-${ads[adPos]}`}
+                  className="jd-product-tile jd-ad-tile bg-white rounded-lg overflow-hidden flex flex-col border border-[#fff] cursor-pointer p-0"
                   style={{
-                    fontFamily: "inherit",
+                    height: "378px",
+                    gridColumn: "span 1 / span 1"
                   }}
-                  title={product.name}
                 >
-                  {product.name}
+                  <img
+                    src={ads[adPos]}
+                    alt={`广告${adPos + 1}`}
+                    className="w-full h-full object-cover"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      display: "block",
+                    }}
+                  />
+                </div>
+              );
+            }
+            // Product card as usual
+            const product = products[index];
+            const mainImage = product.images?.[0] || "";
+            const priceStr = product.currentPrice;
+            const price = getPriceAsNumber(priceStr);
+
+            return (
+              <div
+                key={`${product.id}-${index}`}
+                className="jd-product-tile bg-white rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer flex flex-col"
+                style={{
+                  height: "378px",
+                }}
+                onClick={() => handleProductClick(product.id)}
+              >
+                {/* Image area */}
+                <div
+                  className="w-full bg-gray-50 flex items-center justify-center overflow-hidden"
+                  style={{ height: "240px" }}
+                >
+                  {mainImage ? (
+                    <img
+                      src={mainImage}
+                      alt={product.title}
+                      className="w-full h-full object-contain"
+                    />
+                  ) : (
+                    <span className="text-xs text-gray-400">No Image</span>
+                  )}
                 </div>
 
-                {/* Price and plus icon bar */}
-                <div className="flex flex-row items-center justify-between mt-auto">
-                  <div className="flex flex-row items-end">
-                    <span
-                      className="text-[#e1251b] text-[24px] leading-none font-bold"
-                      style={{
-                        fontFamily: "inherit",
-                        marginRight: "2px",
-                        letterSpacing: 0,
-                      }}
-                    >
-                      ¥3629
-                    </span>
-                    <span
-                      className="text-[#e1251b] text-[15px] leading-none font-bold ml-1 mb-[2px]"
-                      style={{
-                        fontFamily: "inherit",
-                      }}
-                    >
-                      .00
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={(e) => handleAddToCart(e, product.id)}
-                    className="flex items-center justify-center rounded-full bg-[#f8f8f8] hover:bg-[#f1eef1] transition w-8 h-8 ml-2 border border-[#f2f2f2] cursor-pointer"
+                {/* Product info area */}
+                <div
+                  className="flex-1 flex flex-col justify-between px-3 pt-2 pb-3"
+                >
+                  {/* Product name */}
+                  <div
+                    className="text-[17px] font-normal text-black leading-snug break-words line-clamp-2"
+                    style={{
+                      fontFamily: "inherit",
+                    }}
+                    title={product.title}
                   >
-                    <FiPlus className="text-[#e1251b] text-xl" />
-                  </button>
+                    {product.title}
+                  </div>
+
+                  {/* Price and plus icon bar */}
+                  <div className="flex flex-row items-center justify-between mt-auto">
+                    <div className="flex flex-row items-end">
+                      <span
+                        className="text-[#e1251b] text-[24px] leading-none font-bold"
+                        style={{
+                          fontFamily: "inherit",
+                          letterSpacing: 0,
+                        }}
+                      >
+                        ¥{Math.floor(price)}
+                      </span>
+                      <span
+                        className="text-[#e1251b] text-[15px] leading-none font-bold mb-[1px]"
+                        style={{
+                          fontFamily: "inherit",
+                        }}
+                      >
+                        .{((price % 1) * 100).toFixed(0).padStart(2, '0')}
+                      </span>
+                      {product.salesInfo && (
+                        <span className="text-[12px] text-gray-500 ml-2 align-baseline whitespace-nowrap">
+                          {product.salesInfo}
+                        </span>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={(e) => handleAddToCart(e, product.id)}
+                      className="flex items-center justify-center rounded-full bg-[#f8f8f8] hover:bg-[#f1eef1] transition w-8 h-8 ml-2 border border-[#f2f2f2] cursor-pointer"
+                    >
+                      <FiPlus className="text-[#e1251b] text-xl" />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

@@ -1,14 +1,7 @@
 import { useAppContext } from "../context/AppProvider";
 import { FiX } from "react-icons/fi";
-import { useEffect, useRef, useState } from "react";
-
-// Mock product data - all products are the same for now
-const mockProduct = {
-  id: "1",
-  title: "正压式长管空气呼吸器防吸毒毒防全面罩井下可通话带通讯作业面具 通...",
-  price: 3629.0,
-  image: "",
-};
+import { useEffect, useState } from "react";
+import { getProductById, getPriceAsNumber } from "../data/products";
 
 export default function CartDropdown() {
   const {
@@ -73,7 +66,11 @@ export default function CartDropdown() {
   const cartItems = state.cart;
   const cartCount = cartItems.reduce((sum, item) => sum + item.qty, 0);
   const totalPrice = cartItems.reduce((sum, item) => {
-    return sum + mockProduct.price * item.qty;
+    const product = getProductById(item.productId);
+    if (product) {
+      return sum + getPriceAsNumber(product.currentPrice) * item.qty;
+    }
+    return sum;
   }, 0);
 
   return (
@@ -119,60 +116,77 @@ export default function CartDropdown() {
             </div>
           ) : (
             <div className="p-4 space-y-4">
-              {cartItems.map((item) => (
-                <div
-                  key={item.productId}
-                  className="flex items-start gap-3 p-3 border border-gray-200 rounded-lg hover:border-[#e1251b] transition-colors"
-                >
-                  {/* Product Image */}
-                  <div className="w-20 h-20 bg-gray-100 rounded flex-shrink-0 flex items-center justify-center">
-                    {/* Placeholder for image */}
-                    <span className="text-xs text-gray-400">图片</span>
-                  </div>
+              {cartItems.map((item) => {
+                const product = getProductById(item.productId);
+                if (!product) return null;
 
-                  {/* Product Info */}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-gray-800 line-clamp-2 mb-2">
-                      {mockProduct.title}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <div className="text-[#e1251b] font-bold">
-                        ¥{mockProduct.price.toFixed(2)}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {/* Quantity controls */}
-                        <button
-                          onClick={() => removeFromCart(item.productId, false)}
-                          className="w-6 h-6 flex items-center justify-center border border-gray-300 rounded hover:border-[#e1251b] hover:text-[#e1251b] transition-colors text-xs"
-                        >
-                          -
-                        </button>
-                        <span className="text-sm text-gray-700 w-8 text-center">
-                          {item.qty}
-                        </span>
-                        <button
-                          onClick={() =>
-                            updateCartQuantity(item.productId, item.qty + 1)
-                          }
-                          className="w-6 h-6 flex items-center justify-center border border-gray-300 rounded hover:border-[#e1251b] hover:text-[#e1251b] transition-colors text-xs"
-                        >
-                          +
-                        </button>
+                const price = getPriceAsNumber(product.currentPrice);
+                const mainImage = product.images?.[0] || "";
+                
+                return (
+                  <div
+                    key={item.productId}
+                    className="flex items-start gap-3 p-3 border border-gray-200 rounded-lg hover:border-[#e1251b] transition-colors"
+                  >
+                    {/* Product Image */}
+                    <div className="w-20 h-20 bg-gray-100 rounded flex-shrink-0 overflow-hidden">
+                      {mainImage ? (
+                        <img 
+                          src={mainImage} 
+                          alt={product.title}
+                          className="w-full h-full object-contain"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <span className="text-xs text-gray-400">图片</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Product Info */}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-gray-800 line-clamp-2 mb-2">
+                        {product.title}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <div className="text-[#e1251b] font-bold">
+                          ¥{price.toFixed(2)}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {/* Quantity controls */}
+                          <button
+                            onClick={() => removeFromCart(item.productId, false)}
+                            className="w-6 h-6 flex items-center justify-center border border-gray-300 rounded hover:border-[#e1251b] hover:text-[#e1251b] transition-colors text-xs"
+                          >
+                            -
+                          </button>
+                          <span className="text-sm text-gray-700 w-8 text-center">
+                            {item.qty}
+                          </span>
+                          <button
+                            onClick={() =>
+                              updateCartQuantity(item.productId, item.qty + 1)
+                            }
+                            className="w-6 h-6 flex items-center justify-center border border-gray-300 rounded hover:border-[#e1251b] hover:text-[#e1251b] transition-colors text-xs"
+                          >
+                            +
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Remove button */}
-                  <button
-                    onClick={() => removeFromCart(item.productId, true)}
-                    className="text-gray-400 hover:text-[#e1251b] transition-colors flex-shrink-0"
-                    title="删除"
-                    type="button"
-                  >
-                    <FiX size={16} />
-                  </button>
-                </div>
-              ))}
+                    {/* Remove button */}
+                    <button
+                      onClick={() => removeFromCart(item.productId, true)}
+                      className="text-gray-400 hover:text-[#e1251b] transition-colors flex-shrink-0"
+                      title="删除"
+                      type="button"
+                    >
+                      <FiX size={16} />
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
@@ -213,4 +227,3 @@ export default function CartDropdown() {
     </>
   );
 }
-
